@@ -21,7 +21,7 @@ export async function GET() {
       select: { productId: true },
     });
 
-    return NextResponse.json(watchlist.map((item) => item.productId));
+    return NextResponse.json(watchlist.map((item: any) => item.productId));
   } catch (error) {
     console.error("[WATCHLIST_GET]", error);
     return new NextResponse("Internal Error", { status: 500 });

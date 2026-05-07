@@ -11,7 +11,7 @@ export async function GET() {
     include: { product: true }
   });
 
-  return NextResponse.json(purchases.map(p => ({
+  return NextResponse.json(purchases.map((p: any) => ({
     ...p,
     ...p.product,
     id: p.productId // For client compatibility
