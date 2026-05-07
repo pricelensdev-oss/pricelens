@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getDbUserId } from "@/lib/auth";
 
-// GET /api/alerts - Returns the user's active price alerts
+// GET /api/alerts - Returns the user's active price alerts (mapped from Watchlist)
 export async function GET() {
   try {
     const { userId } = await auth();
@@ -12,13 +12,15 @@ export async function GET() {
     const dbUserId = await getDbUserId();
     if (!dbUserId) return NextResponse.json({});
 
-    const alerts = await db.alert.findMany({
-      where: { userId: dbUserId, isActive: true },
+    const alerts = await db.watchlist.findMany({
+      where: { userId: dbUserId },
     });
 
     // Format as { [productId]: targetPrice }
     const alertMap = alerts.reduce((acc, alert) => {
-      acc[alert.productId] = alert.targetPrice;
+      if (alert.targetPrice) {
+        acc[alert.productId] = alert.targetPrice;
+      }
       return acc;
     }, {} as Record<string, number>);
 
@@ -29,7 +31,7 @@ export async function GET() {
   }
 }
 
-// POST /api/alerts - Creates or removes a price alert
+// POST /api/alerts - Creates or removes a price alert (mapped to Watchlist)
 export async function POST(req: Request) {
   try {
     const { userId } = await auth();
@@ -45,7 +47,7 @@ export async function POST(req: Request) {
     if (action === "set") {
       if (!targetPrice) return new NextResponse("Target price required", { status: 400 });
 
-      await db.alert.upsert({
+      await db.watchlist.upsert({
         where: {
           userId_productId: {
             userId: dbUserId,
@@ -59,17 +61,21 @@ export async function POST(req: Request) {
         },
         update: {
           targetPrice: Number(targetPrice),
-          isActive: true,
         },
       });
     } else if (action === "remove") {
-      await db.alert.updateMany({
-        where: {
-          userId: dbUserId,
-          productId: productId,
-        },
-        data: { isActive: false },
-      });
+      try {
+        await db.watchlist.delete({
+          where: {
+            userId_productId: {
+              userId: dbUserId,
+              productId: productId,
+            },
+          }
+        });
+      } catch (e) {
+        // Ignore error if it doesn't exist
+      }
     }
 
     return new NextResponse("Success", { status: 200 });
