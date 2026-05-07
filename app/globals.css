@@ -1,0 +1,206 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* --- PriceLens Carbon Design System --- */
+  --background: #0E0F11;
+  --foreground: #FFFFFF;
+  
+  --card: #17191C;
+  --card-foreground: #FFFFFF;
+  
+  --popover: #17191C;
+  --popover-foreground: #FFFFFF;
+  
+  --primary: #C8F31D; /* Accent Green */
+  --primary-foreground: #0E0F11;
+  
+  --secondary: #17191C;
+  --secondary-foreground: #A3A6AB;
+  
+  --muted: #17191C;
+  --muted-foreground: #6C7075;
+  
+  --accent: #C8F31D;
+  --accent-foreground: #0E0F11;
+  
+  --destructive: #FF5C5C; /* Error */
+  --destructive-foreground: #FFFFFF;
+  
+  --border: rgba(255, 255, 255, 0.05);
+  --input: #17191C;
+  --ring: #C8F31D;
+  
+  --radius: 0.75rem;
+
+  /* State Colors */
+  --success: #4CAF50;
+  --warning: #E8FF5A;
+  --danger: #FF5C5C;
+  --cta-blue: #8FA9D6;
+}
+
+@theme inline {
+  --font-sans: 'Inter', 'Roboto', system-ui, sans-serif;
+  --font-display: 'Inter', 'Roboto', sans-serif;
+  
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-cta-blue: var(--cta-blue);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground selection:bg-primary/30 selection:text-primary;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight;
+  }
+}
+
+/* ─── Luxury-Tech Utility Classes ────────────────────────────────── */
+
+/* High-end Glassmorphism */
+.glass {
+  @apply bg-card/60 backdrop-blur-2xl border border-white/5;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+}
+
+.glass-header {
+  @apply sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-white/5;
+}
+
+/* Premium Card Interaction */
+.luxury-card {
+  @apply transition-all duration-700;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  background: linear-gradient(165deg, var(--card) 0%, #121417 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.luxury-card:hover {
+  @apply -translate-y-2 border-primary/40;
+  box-shadow: 0 40px 80px -20px rgba(200, 243, 29, 0.15);
+}
+
+/* Glows */
+.glow-primary {
+  box-shadow: 0 0 30px -5px var(--primary);
+}
+
+.glow-success {
+  box-shadow: 0 0 30px -5px var(--success);
+}
+
+.text-glow {
+  text-shadow: 0 0 12px var(--primary);
+}
+
+/* ─── Neural Mesh Background ───────────────────────────────── */
+.neural-mesh {
+  position: relative;
+}
+
+.neural-mesh::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.03) 1px, transparent 0);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(circle at center, black, transparent 80%);
+}
+
+/* ─── Animations ────────────────────────────────────────────── */
+
+@keyframes slide-up-fade {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-stagger-1 { animation: slide-up-fade 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-stagger-2 { animation: slide-up-fade 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; opacity: 0; }
+.animate-stagger-3 { animation: slide-up-fade 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards; opacity: 0; }
+.animate-stagger-4 { animation: slide-up-fade 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; opacity: 0; }
+
+@keyframes buy-pulse-luxury {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(200, 243, 29, 0.4); transform: scale(1); }
+  50% { box-shadow: 0 0 25px 4px rgba(200, 243, 29, 0.2); transform: scale(1.04); }
+}
+
+.buy-verdict-pulse {
+  animation: buy-pulse-luxury 2.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/20 rounded-full hover:bg-primary/40 transition-colors;
+}
+
+/* Hero Gradient */
+.hero-gradient {
+  background: radial-gradient(circle at 50% 50%, rgba(200, 243, 29, 0.1) 0%, transparent 50%);
+}
+
+.shadow-glow-primary {
+  box-shadow: 0 0 20px -5px var(--primary);
+}
+
+.shadow-glow-success {
+  box-shadow: 0 0 20px -5px var(--success);
+}
+
+/* Button & Card Micro-interactions */
+.btn-luxury {
+  @apply relative overflow-hidden transition-all duration-300 active:scale-95;
+}
+
+.btn-luxury::after {
+  content: "";
+  @apply absolute inset-0 bg-white/10 opacity-0 transition-opacity;
+}
+
+.btn-luxury:hover::after {
+  @apply opacity-100;
+}
+
+/* Smooth Page Load */
+.page-fade-in {
+  animation: slide-up-fade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

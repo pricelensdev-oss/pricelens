@@ -1,0 +1,8 @@
+import { Resend } from 'resend';
+
+export const resend = process.env.RESEND_API_KEY 
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null;
+
+// Helper to check if email system is ready
+export const isEmailConfigured = () => !!resend;

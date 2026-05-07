@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  clerkId         String?  @unique
+  name            String?
+  pincode         String?
+  isBusinessUser  Boolean  @default(false)
+  walletBalance   Float    @default(0)
+  exchangePref    Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  watchlist     Watchlist[]
+  purchases     ProtectedPurchase[]
+  notifications Notification[]
+}
+
+model Product {
+  id             String   @id @default(cuid())
+  name           String
+  brand          String
+  category       String
+  image          String
+  description    String
+  specifications String?
+  
+  decisionType     String?
+  decisionConf     Int?
+  decisionReason   String?
+  decisionMove     String?
+  decisionWindow   String?
+  
+  trend            String?
+  lowestPrice      Int?
+  highestPrice     Int?
+  averagePrice     Int?
+  currentBestPrice Int
+  currentBestPlatform String
+  lastCalculatedAt    DateTime @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  platforms         Platform[]
+  priceHistory      PriceHistory[]
+  watchlistedBy     Watchlist[]
+  protectedPurchases ProtectedPurchase[]
+}
+
+model Platform {
+  id             String  @id @default(cuid())
+  platformId     String
+  name           String
+  logo           String
+  price          Int
+  originalPrice  Int
+  effectivePrice Int
+  url            String
+  inStock        Boolean @default(true)
+  bankOffers     String?
+  lastVerifiedAt DateTime @default(now())
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, platformId])
+}
+
+model PriceHistory {
+  id        String   @id @default(cuid())
+  date      String
+  price     Int
+  platform  String
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, date])
+}
+
+model Watchlist {
+  id        String   @id @default(cuid())
+  targetPrice Int?
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+}
+
+model ProtectedPurchase {
+  id             String   @id @default(cuid())
+  purchasePrice  Float
+  purchaseDate   DateTime @default(now())
+  platformId     String
+  shieldStatus   String   @default("active") // active, claimed, expired
+  savingsRecovered Float  @default(0)
+  createdAt      DateTime @default(now())
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([userId, shieldStatus])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  title     String
+  message   String
+  type      String   // price_drop, shield_success, info
+  read      Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+}
