@@ -17,7 +17,7 @@ export async function GET() {
     });
 
     // Format as { [productId]: targetPrice }
-    const alertMap = alerts.reduce((acc, alert) => {
+    const alertMap = alerts.reduce((acc: Record<string, number>, alert) => {
       if (alert.targetPrice) {
         acc[alert.productId] = alert.targetPrice;
       }
