@@ -3,6 +3,8 @@ import { getProductById } from "@/lib/data"
 import { ProductClient } from "./product-client"
 import { refreshProductIfStale } from "@/lib/scraper"
 
+export const dynamic = "force-dynamic"
+
 export default async function ProductPage({
   params,
 }: {

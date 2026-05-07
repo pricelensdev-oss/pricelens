@@ -6,6 +6,8 @@ export const metadata = {
   description: "High-velocity price drops and neural market picks across Amazon, Flipkart, Croma, and Reliance Digital.",
 }
 
+export const dynamic = "force-dynamic"
+
 export default async function DealsPage() {
   const allProducts = await getAllProducts()
   
