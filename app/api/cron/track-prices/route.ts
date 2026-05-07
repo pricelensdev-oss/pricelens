@@ -51,10 +51,9 @@ export async function GET(request: Request) {
       }
 
       // 3. Trigger Alerts if a new low is reached
-      const alerts = await db.alert.findMany({
+      const alerts = await db.watchlist.findMany({
         where: {
           productId: product.id,
-          isActive: true,
           targetPrice: {
             gte: productBestPrice
           }
@@ -65,7 +64,7 @@ export async function GET(request: Request) {
       })
 
       for (const alert of alerts) {
-        if (alert.user.email) {
+        if (alert.user.email && alert.targetPrice) {
           const emailResult = await sendPriceAlertEmail(
             alert.user.email,
             product.name,
@@ -75,11 +74,9 @@ export async function GET(request: Request) {
             product.image
           )
 
-          // Mark alert as completed
-          await db.alert.update({
-            where: { id: alert.id },
-            data: { isActive: false }
-          })
+          // In Watchlist model, we don't necessarily disable it, 
+          // but we could set targetPrice to null or similar if we wanted it to be a one-time alert.
+          // For now, we'll keep it active so the user continues to track.
 
           alertResults.push({
             user: alert.user.email,
@@ -94,7 +91,7 @@ export async function GET(request: Request) {
       timestamp: new Date().toISOString(),
       trackingSummary: {
         totalProcessed: trackResults.length,
-        successful: trackResults.filter(r => r.success).length
+        successful: trackResults.filter((r: any) => r.success).length
       },
       alertsTriggered: alertResults
     })

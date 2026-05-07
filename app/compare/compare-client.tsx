@@ -87,7 +87,7 @@ export function CompareClient({ products }: { products: Product[] }) {
                   <span className="text-lg font-bold tracking-tight text-foreground/60">
                     ₹{product.currentBestPrice.toLocaleString("en-IN")}
                   </span>
-                  <DealScore score={product.dealScore} size="sm" />
+                  <DealScore score={product.decision?.confidence || 0} />
                 </div>
               </td>
             ))}
@@ -148,11 +148,11 @@ export function CompareClient({ products }: { products: Product[] }) {
               <td key={product.id} className="p-6">
                 <div className="flex items-center gap-2 mb-1">
                   <TrendingDown className="h-3 w-3 text-primary" />
-                  <span className="text-[11px] font-bold text-foreground">{product.expectedMovement}</span>
+                  <span className="text-[11px] font-bold text-foreground">{product.decision?.expectedMovement}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Clock className="h-3 w-3 text-muted-foreground/60" />
-                  <span className="text-[10px] text-muted-foreground">{product.timeWindow}</span>
+                  <span className="text-[10px] text-muted-foreground">{product.decision?.timeWindow}</span>
                 </div>
               </td>
             ))}
@@ -169,7 +169,7 @@ export function CompareClient({ products }: { products: Product[] }) {
                   <DecisionBadge decision={product.decision.type} />
                 </div>
                 <p className="text-[10px] leading-relaxed text-muted-foreground italic line-clamp-2">
-                  "{product.reasoning}"
+                  "{product.decision?.reasoning}"
                 </p>
               </td>
             ))}
