@@ -52,6 +52,6 @@ export async function runMarketAudit() {
     return { success: true, auditedCount: productsToAudit.length }
   } catch (error) {
     console.error("Critical error during market audit:", error)
-    return { success: false, error: error.message }
+    return { success: false, error: error instanceof Error ? error.message : String(error) }
   }
 }

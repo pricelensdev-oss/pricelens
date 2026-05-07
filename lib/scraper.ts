@@ -59,7 +59,7 @@ export async function refreshProductIfStale(productId: string) {
   console.log(`[Scraper] 🔄 Data for ${product.name} is STALE. Triggering marketplace sync...`)
 
   // Refresh all platforms
-  const scrapePromises = product.platforms.map(p => trackProduct(productId, p.platformId, p.url))
+  const scrapePromises = product.platforms.map((p: any) => trackProduct(productId, p.platformId, p.url))
   await Promise.all(scrapePromises)
 
   // Recalculate Product Intelligence
@@ -79,7 +79,7 @@ async function recalculateProductIntelligence(productId: string) {
 
   if (!product || product.platforms.length === 0) return
 
-  const sorted = [...product.platforms].sort((a, b) => a.price - b.price)
+  const sorted = [...product.platforms].sort((a: any, b: any) => a.price - b.price)
   const bestPrice = sorted[0].price
   const bestPlatform = sorted[0].name
   const nextEvent = getNextMajorEvent()
@@ -92,7 +92,7 @@ async function recalculateProductIntelligence(productId: string) {
   const now = new Date()
   const daysToEvent = nextEvent ? Math.ceil((new Date(nextEvent.startDate).getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : 999
 
-  if (bestPrice <= product.lowestPrice) {
+  if (product.lowestPrice && bestPrice <= product.lowestPrice) {
     decisionType = "BUY"
     decisionReason = "Price has hit an all-time low. Even with upcoming sales, significant further drops are unlikely."
     decisionWindow = "48 Hours"
@@ -100,7 +100,7 @@ async function recalculateProductIntelligence(productId: string) {
     decisionType = "WAIT"
     decisionReason = `Predictive Analysis: ${nextEvent.name} begins in ${daysToEvent} days. Historical data suggests a potential ${nextEvent.avgDiscount}% drop.`
     decisionWindow = `${daysToEvent} Days`
-  } else if (bestPrice < product.averagePrice) {
+  } else if (product.averagePrice && bestPrice < product.averagePrice) {
     decisionType = "BUY"
     decisionReason = "Current price is significantly below 90-day average. Solid entry point."
     decisionWindow = "3 Days"
@@ -115,7 +115,7 @@ async function recalculateProductIntelligence(productId: string) {
       decisionReason,
       decisionWindow,
       lastCalculatedAt: new Date(),
-      trend: bestPrice < product.averagePrice ? "down" : "stable"
+      trend: (product.averagePrice && bestPrice < product.averagePrice) ? "down" : "stable"
     }
   })
 }
@@ -226,7 +226,7 @@ export async function discoverProducts(query: string): Promise<string[]> {
     for (const item of discoveredItems) {
       const canonicalId = generateCanonicalId(item.name)
       const existing = await db.product.findMany({ select: { name: true } })
-      if (existing.some(p => generateCanonicalId(p.name) === canonicalId)) continue
+      if (existing.some((p: any) => generateCanonicalId(p.name) === canonicalId)) continue
 
       const product = await db.product.create({
         data: {

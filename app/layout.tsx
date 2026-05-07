@@ -15,6 +15,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://pricelens.app'),
   title: {
     default: 'PriceLens — AI-Powered Purchase Decision System',
     template: '%s | PriceLens',

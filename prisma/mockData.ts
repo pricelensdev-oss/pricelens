@@ -10,8 +10,8 @@ export const products: Product[] = [
     description: "The latest iPhone with titanium design and A17 Pro chip.",
     specifications: { Display: "6.7-inch Super Retina XDR", Processor: "A17 Pro", Storage: "256GB" },
     platforms: [
-      { id: "p1a", name: "Amazon", logo: "/platforms/amazon.svg", price: 159900, originalPrice: 159900, effectivePrice: 154900, url: "https://amazon.in", inStock: true, bankOffers: ["5000 off on HDFC"] },
-      { id: "p1b", name: "Flipkart", logo: "/platforms/flipkart.svg", price: 158900, originalPrice: 159900, effectivePrice: 153900, url: "https://flipkart.com", inStock: true, bankOffers: ["5000 off on ICICI"] }
+      { id: "p1a", platformId: "amazon", name: "Amazon", logo: "/platforms/amazon.svg", price: 159900, originalPrice: 159900, effectivePrice: 154900, url: "https://amazon.in", inStock: true, bankOffers: ["5000 off on HDFC"] },
+      { id: "p1b", platformId: "flipkart", name: "Flipkart", logo: "/platforms/flipkart.svg", price: 158900, originalPrice: 159900, effectivePrice: 153900, url: "https://flipkart.com", inStock: true, bankOffers: ["5000 off on ICICI"] }
     ],
     priceHistory: [
       { date: "2024-04-01", price: 159900, platform: "Amazon" },
@@ -19,7 +19,7 @@ export const products: Product[] = [
     ],
     decision: { type: "WAIT", confidence: 85, reasoning: "Price drop expected next month based on historical data.", expectedMovement: "Drop by ₹5,000", timeWindow: "30 days" },
     trend: "down",
-    lowestPrice: 154900, highestPrice: 159900, averagePrice: 157400, currentBestPrice: 154900, currentBestPlatform: "Amazon"
+    lowestPrice: 154900, highestPrice: 159900, averagePrice: 157400, currentBestPrice: 154900, currentBestPlatform: "Amazon", isShieldProtected: false
   },
   {
     id: "2",
@@ -30,7 +30,7 @@ export const products: Product[] = [
     description: "Industry leading noise canceling headphones.",
     specifications: { Type: "Over-ear", Battery: "30 Hours", Connectivity: "Bluetooth 5.2" },
     platforms: [
-      { id: "p2a", name: "Flipkart", logo: "/platforms/flipkart.svg", price: 26990, originalPrice: 34990, effectivePrice: 24990, url: "https://flipkart.com", inStock: true, bankOffers: ["2000 off on ICICI"] }
+      { id: "p2a", platformId: "flipkart", name: "Flipkart", logo: "/platforms/flipkart.svg", price: 26990, originalPrice: 34990, effectivePrice: 24990, url: "https://flipkart.com", inStock: true, bankOffers: ["2000 off on ICICI"] }
     ],
     priceHistory: [
       { date: "2024-03-01", price: 29990, platform: "Flipkart" },
@@ -38,7 +38,7 @@ export const products: Product[] = [
     ],
     decision: { type: "BUY", confidence: 95, reasoning: "Lowest price of the year.", expectedMovement: "Rise by ₹3,000", timeWindow: "7 days" },
     trend: "up",
-    lowestPrice: 24990, highestPrice: 34990, averagePrice: 29990, currentBestPrice: 24990, currentBestPlatform: "Flipkart"
+    lowestPrice: 24990, highestPrice: 34990, averagePrice: 29990, currentBestPrice: 24990, currentBestPlatform: "Flipkart", isShieldProtected: false
   },
   {
     id: "3",
@@ -49,12 +49,12 @@ export const products: Product[] = [
     description: "Supercharged by M3. Super thin and light.",
     specifications: { Display: "13.6-inch Liquid Retina", Processor: "M3", RAM: "8GB" },
     platforms: [
-      { id: "p3a", name: "Croma", logo: "/platforms/croma.svg", price: 114900, originalPrice: 114900, effectivePrice: 104900, url: "https://croma.com", inStock: true, bankOffers: ["10000 instant discount on SBI"] }
+      { id: "p3a", platformId: "croma", name: "Croma", logo: "/platforms/croma.svg", price: 114900, originalPrice: 114900, effectivePrice: 104900, url: "https://croma.com", inStock: true, bankOffers: ["10000 instant discount on SBI"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 114900, platform: "Croma" }],
     decision: { type: "HOLD", confidence: 60, reasoning: "Price is stable, no immediate drops expected.", expectedMovement: "Stable", timeWindow: "60 days" },
     trend: "stable",
-    lowestPrice: 104900, highestPrice: 114900, averagePrice: 109900, currentBestPrice: 104900, currentBestPlatform: "Croma"
+    lowestPrice: 104900, highestPrice: 114900, averagePrice: 109900, currentBestPrice: 104900, currentBestPlatform: "Croma", isShieldProtected: false
   },
   {
     id: "4",
@@ -65,12 +65,12 @@ export const products: Product[] = [
     description: "The ultimate AI phone from Samsung.",
     specifications: { Display: "6.8-inch Dynamic AMOLED 2X", Processor: "Snapdragon 8 Gen 3", Storage: "512GB" },
     platforms: [
-      { id: "p4a", name: "Amazon", logo: "/platforms/amazon.svg", price: 129999, originalPrice: 139999, effectivePrice: 119999, url: "https://amazon.in", inStock: true, bankOffers: ["10000 off on HDFC"] }
+      { id: "p4a", platformId: "amazon", name: "Amazon", logo: "/platforms/amazon.svg", price: 129999, originalPrice: 139999, effectivePrice: 119999, url: "https://amazon.in", inStock: true, bankOffers: ["10000 off on HDFC"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 129999, platform: "Amazon" }],
     decision: { type: "BUY", confidence: 90, reasoning: "Solid discount on a relatively new flagship.", expectedMovement: "Stable", timeWindow: "15 days" },
     trend: "down",
-    lowestPrice: 119999, highestPrice: 139999, averagePrice: 129999, currentBestPrice: 119999, currentBestPlatform: "Amazon"
+    lowestPrice: 119999, highestPrice: 139999, averagePrice: 129999, currentBestPrice: 119999, currentBestPlatform: "Amazon", isShieldProtected: false
   },
   {
     id: "5",
@@ -81,12 +81,12 @@ export const products: Product[] = [
     description: "Stunning OLED picture quality with Cognitive Processor XR.",
     specifications: { Size: "65-inch", Resolution: "4K UHD", RefreshRate: "120Hz" },
     platforms: [
-      { id: "p5a", name: "Reliance Digital", logo: "/platforms/reliance.svg", price: 219900, originalPrice: 349900, effectivePrice: 209900, url: "https://reliancedigital.in", inStock: true, bankOffers: ["10000 off on Kotak"] }
+      { id: "p5a", platformId: "reliance", name: "Reliance Digital", logo: "/platforms/reliance.svg", price: 219900, originalPrice: 349900, effectivePrice: 209900, url: "https://reliancedigital.in", inStock: true, bankOffers: ["10000 off on Kotak"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 219900, platform: "Reliance Digital" }],
     decision: { type: "BUY", confidence: 92, reasoning: "Deepest discount since launch.", expectedMovement: "Stable", timeWindow: "30 days" },
     trend: "down",
-    lowestPrice: 209900, highestPrice: 349900, averagePrice: 229900, currentBestPrice: 209900, currentBestPlatform: "Reliance Digital"
+    lowestPrice: 209900, highestPrice: 349900, averagePrice: 229900, currentBestPrice: 209900, currentBestPlatform: "Reliance Digital", isShieldProtected: false
   },
   {
     id: "6",
@@ -97,12 +97,12 @@ export const products: Product[] = [
     description: "The new slimmer PS5 with 1TB storage.",
     specifications: { Storage: "1TB SSD", Resolution: "4K", Connectivity: "HDMI 2.1" },
     platforms: [
-      { id: "p6a", name: "Amazon", logo: "/platforms/amazon.svg", price: 54990, originalPrice: 54990, effectivePrice: 49990, url: "https://amazon.in", inStock: true, bankOffers: ["5000 off on select cards"] }
+      { id: "p6a", platformId: "amazon", name: "Amazon", logo: "/platforms/amazon.svg", price: 54990, originalPrice: 54990, effectivePrice: 49990, url: "https://amazon.in", inStock: true, bankOffers: ["5000 off on select cards"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 54990, platform: "Amazon" }],
     decision: { type: "WAIT", confidence: 75, reasoning: "Upcoming Summer Sale expected to bring prices down.", expectedMovement: "Drop by ₹5,000", timeWindow: "14 days" },
     trend: "stable",
-    lowestPrice: 49990, highestPrice: 54990, averagePrice: 52490, currentBestPrice: 49990, currentBestPlatform: "Amazon"
+    lowestPrice: 49990, highestPrice: 54990, averagePrice: 52490, currentBestPrice: 49990, currentBestPlatform: "Amazon", isShieldProtected: false
   },
   {
     id: "7",
@@ -113,12 +113,12 @@ export const products: Product[] = [
     description: "The gold standard for gaming and movie OLED TVs.",
     specifications: { Size: "55-inch", Resolution: "4K OLED", Features: "G-Sync, FreeSync" },
     platforms: [
-      { id: "p7a", name: "Amazon", logo: "/platforms/amazon.svg", price: 139990, originalPrice: 199990, effectivePrice: 129990, url: "https://amazon.in", inStock: true, bankOffers: ["10000 off on SBI"] }
+      { id: "p7a", platformId: "amazon", name: "Amazon", logo: "/platforms/amazon.svg", price: 139990, originalPrice: 199990, effectivePrice: 129990, url: "https://amazon.in", inStock: true, bankOffers: ["10000 off on SBI"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 139990, platform: "Amazon" }],
     decision: { type: "BUY", confidence: 88, reasoning: "Clearance pricing before C4 arrives.", expectedMovement: "Stable", timeWindow: "21 days" },
     trend: "down",
-    lowestPrice: 129990, highestPrice: 199990, averagePrice: 149990, currentBestPrice: 129990, currentBestPlatform: "Amazon"
+    lowestPrice: 129990, highestPrice: 199990, averagePrice: 149990, currentBestPrice: 129990, currentBestPlatform: "Amazon", isShieldProtected: false
   },
   {
     id: "8",
@@ -129,12 +129,12 @@ export const products: Product[] = [
     description: "Performance meets portability with RTX 4050.",
     specifications: { Processor: "Ryzen 7 5800H", GPU: "RTX 4050", RAM: "16GB" },
     platforms: [
-      { id: "p8a", name: "Flipkart", logo: "/platforms/flipkart.svg", price: 74990, originalPrice: 89990, effectivePrice: 69990, url: "https://flipkart.com", inStock: true, bankOffers: ["5000 off on Axis"] }
+      { id: "p8a", platformId: "flipkart", name: "Flipkart", logo: "/platforms/flipkart.svg", price: 74990, originalPrice: 89990, effectivePrice: 69990, url: "https://flipkart.com", inStock: true, bankOffers: ["5000 off on Axis"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 74990, platform: "Flipkart" }],
     decision: { type: "BUY", confidence: 94, reasoning: "Lowest price for an RTX 4050 laptop.", expectedMovement: "Rise", timeWindow: "5 days" },
     trend: "up",
-    lowestPrice: 69990, highestPrice: 89990, averagePrice: 79990, currentBestPrice: 69990, currentBestPlatform: "Flipkart"
+    lowestPrice: 69990, highestPrice: 89990, averagePrice: 79990, currentBestPrice: 69990, currentBestPlatform: "Flipkart", isShieldProtected: false
   },
   {
     id: "9",
@@ -145,12 +145,12 @@ export const products: Product[] = [
     description: "The best in-ear noise canceling for Apple users.",
     specifications: { Chip: "H2", Connectivity: "USB-C", Battery: "6 hours ANC" },
     platforms: [
-      { id: "p9a", name: "Amazon", logo: "/platforms/amazon.svg", price: 19900, originalPrice: 24900, effectivePrice: 18900, url: "https://amazon.in", inStock: true, bankOffers: ["1000 off on HDFC"] }
+      { id: "p9a", platformId: "amazon", name: "Amazon", logo: "/platforms/amazon.svg", price: 19900, originalPrice: 24900, effectivePrice: 18900, url: "https://amazon.in", inStock: true, bankOffers: ["1000 off on HDFC"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 19900, platform: "Amazon" }],
     decision: { type: "BUY", confidence: 91, reasoning: "Consistently hovering at its lowest point.", expectedMovement: "Stable", timeWindow: "15 days" },
     trend: "stable",
-    lowestPrice: 18900, highestPrice: 24900, averagePrice: 20900, currentBestPrice: 18900, currentBestPlatform: "Amazon"
+    lowestPrice: 18900, highestPrice: 24900, averagePrice: 20900, currentBestPrice: 18900, currentBestPlatform: "Amazon", isShieldProtected: false
   },
   {
     id: "10",
@@ -161,12 +161,12 @@ export const products: Product[] = [
     description: "The hybrid powerhouse for stills and video.",
     specifications: { Resolution: "33MP", Video: "4K 60p", AF: "Real-time Tracking" },
     platforms: [
-      { id: "p10a", name: "Amazon", logo: "/platforms/amazon.svg", price: 204990, originalPrice: 214990, effectivePrice: 194990, url: "https://amazon.in", inStock: true, bankOffers: ["10000 off on HDFC"] }
+      { id: "p10a", platformId: "amazon", name: "Amazon", logo: "/platforms/amazon.svg", price: 204990, originalPrice: 214990, effectivePrice: 194990, url: "https://amazon.in", inStock: true, bankOffers: ["10000 off on HDFC"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 204990, platform: "Amazon" }],
     decision: { type: "HOLD", confidence: 55, reasoning: "Price is standard. No big sales expected soon.", expectedMovement: "Stable", timeWindow: "90 days" },
     trend: "stable",
-    lowestPrice: 194990, highestPrice: 214990, averagePrice: 204990, currentBestPrice: 194990, currentBestPlatform: "Amazon"
+    lowestPrice: 194990, highestPrice: 214990, averagePrice: 204990, currentBestPrice: 194990, currentBestPlatform: "Amazon", isShieldProtected: false
   },
   {
     id: "11",
@@ -177,12 +177,12 @@ export const products: Product[] = [
     description: "The most powerful Xbox ever.",
     specifications: { Power: "12 Teraflops", Storage: "1TB SSD", Features: "Quick Resume" },
     platforms: [
-      { id: "p11a", name: "Flipkart", logo: "/platforms/flipkart.svg", price: 51990, originalPrice: 54990, effectivePrice: 47990, url: "https://flipkart.com", inStock: true, bankOffers: ["4000 off on HDFC"] }
+      { id: "p11a", platformId: "flipkart", name: "Flipkart", logo: "/platforms/flipkart.svg", price: 51990, originalPrice: 54990, effectivePrice: 47990, url: "https://flipkart.com", inStock: true, bankOffers: ["4000 off on HDFC"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 51990, platform: "Flipkart" }],
     decision: { type: "BUY", confidence: 82, reasoning: "Better value than PS5 right now.", expectedMovement: "Stable", timeWindow: "14 days" },
     trend: "down",
-    lowestPrice: 47990, highestPrice: 54990, averagePrice: 51990, currentBestPrice: 47990, currentBestPlatform: "Flipkart"
+    lowestPrice: 47990, highestPrice: 54990, averagePrice: 51990, currentBestPrice: 47990, currentBestPlatform: "Flipkart", isShieldProtected: false
   },
   {
     id: "12",
@@ -193,12 +193,12 @@ export const products: Product[] = [
     description: "The best of Google AI in a phone.",
     specifications: { Display: "6.7-inch Actua Display", Chip: "Tensor G3", RAM: "12GB" },
     platforms: [
-      { id: "p12a", name: "Flipkart", logo: "/platforms/flipkart.svg", price: 106999, originalPrice: 113999, effectivePrice: 96999, url: "https://flipkart.com", inStock: true, bankOffers: ["10000 off on ICICI"] }
+      { id: "p12a", platformId: "flipkart", name: "Flipkart", logo: "/platforms/flipkart.svg", price: 106999, originalPrice: 113999, effectivePrice: 96999, url: "https://flipkart.com", inStock: true, bankOffers: ["10000 off on ICICI"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 106999, platform: "Flipkart" }],
     decision: { type: "WAIT", confidence: 80, reasoning: "Pixel 8a launch usually triggers a drop for Pro.", expectedMovement: "Drop", timeWindow: "30 days" },
     trend: "down",
-    lowestPrice: 96999, highestPrice: 113999, averagePrice: 106999, currentBestPrice: 96999, currentBestPlatform: "Flipkart"
+    lowestPrice: 96999, highestPrice: 113999, averagePrice: 106999, currentBestPrice: 96999, currentBestPlatform: "Flipkart", isShieldProtected: false
   },
   {
     id: "13",
@@ -209,12 +209,12 @@ export const products: Product[] = [
     description: "Advanced health tracking on your wrist.",
     specifications: { Size: "44mm", Screen: "Sapphire Crystal", OS: "Wear OS" },
     platforms: [
-      { id: "p13a", name: "Amazon", logo: "/platforms/amazon.svg", price: 24999, originalPrice: 29999, effectivePrice: 21999, url: "https://amazon.in", inStock: true, bankOffers: ["3000 off on HDFC"] }
+      { id: "p13a", platformId: "amazon", name: "Amazon", logo: "/platforms/amazon.svg", price: 24999, originalPrice: 29999, effectivePrice: 21999, url: "https://amazon.in", inStock: true, bankOffers: ["3000 off on HDFC"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 24999, platform: "Amazon" }],
     decision: { type: "BUY", confidence: 87, reasoning: "Great value for a premium smartwatch.", expectedMovement: "Stable", timeWindow: "15 days" },
     trend: "stable",
-    lowestPrice: 21999, highestPrice: 29999, averagePrice: 25999, currentBestPrice: 21999, currentBestPlatform: "Amazon"
+    lowestPrice: 21999, highestPrice: 29999, averagePrice: 25999, currentBestPrice: 21999, currentBestPlatform: "Amazon", isShieldProtected: false
   },
   {
     id: "14",
@@ -225,12 +225,12 @@ export const products: Product[] = [
     description: "The gold standard of noise cancellation.",
     specifications: { Type: "Over-ear", Features: "Immersive Audio", Battery: "24 hours" },
     platforms: [
-      { id: "p14a", name: "Amazon", logo: "/platforms/amazon.svg", price: 33900, originalPrice: 35900, effectivePrice: 31900, url: "https://amazon.in", inStock: true, bankOffers: ["2000 off on SBI"] }
+      { id: "p14a", platformId: "amazon", name: "Amazon", logo: "/platforms/amazon.svg", price: 33900, originalPrice: 35900, effectivePrice: 31900, url: "https://amazon.in", inStock: true, bankOffers: ["2000 off on SBI"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 33900, platform: "Amazon" }],
     decision: { type: "HOLD", confidence: 65, reasoning: "Recent launch, prices aren't moving much yet.", expectedMovement: "Stable", timeWindow: "45 days" },
     trend: "stable",
-    lowestPrice: 31900, highestPrice: 35900, averagePrice: 33900, currentBestPrice: 31900, currentBestPlatform: "Amazon"
+    lowestPrice: 31900, highestPrice: 35900, averagePrice: 33900, currentBestPrice: 31900, currentBestPlatform: "Amazon", isShieldProtected: false
   },
   {
     id: "15",
@@ -241,11 +241,11 @@ export const products: Product[] = [
     description: "The most beautiful 2-in-1 laptop with OLED.",
     specifications: { Screen: "14-inch OLED Touch", Processor: "Core Ultra 7", RAM: "16GB" },
     platforms: [
-      { id: "p15a", name: "HP Store", logo: "/platforms/hp.svg", price: 164999, originalPrice: 174999, effectivePrice: 154999, url: "https://hp.com", inStock: true, bankOffers: ["10000 off on major cards"] }
+      { id: "p15a", platformId: "hp", name: "HP Store", logo: "/platforms/hp.svg", price: 164999, originalPrice: 174999, effectivePrice: 154999, url: "https://hp.com", inStock: true, bankOffers: ["10000 off on major cards"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 164999, platform: "HP Store" }],
     decision: { type: "WAIT", confidence: 70, reasoning: "Back-to-school offers coming in July.", expectedMovement: "Drop", timeWindow: "60 days" },
     trend: "stable",
-    lowestPrice: 154999, highestPrice: 174999, averagePrice: 164999, currentBestPrice: 154999, currentBestPlatform: "HP Store"
+    lowestPrice: 154999, highestPrice: 174999, averagePrice: 164999, currentBestPrice: 154999, currentBestPlatform: "HP Store", isShieldProtected: false
   }
 ];

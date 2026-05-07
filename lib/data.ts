@@ -21,41 +21,50 @@ export async function getProductsByIds(ids: string[]): Promise<Product[]> {
     },
   })
 
-  return products.map(product => ({
-    id: product.id,
-    name: product.name,
-    brand: product.brand,
-    category: product.category,
-    image: product.image,
-    description: product.description,
-    specifications: JSON.parse(product.specifications),
-    platforms: product.platforms.map(p => ({
-      id: p.id,
-      platformId: p.platformId,
-      name: p.name,
-      logo: p.logo,
-      price: p.price,
-      originalPrice: p.originalPrice,
-      effectivePrice: p.effectivePrice,
-      url: p.url,
-      inStock: p.inStock,
-      bankOffers: p.bankOffers ? JSON.parse(p.bankOffers) : undefined,
-    })),
-    priceHistory: product.priceHistory,
-    decision: {
-      type: product.decisionType as DecisionType,
-      confidence: product.decisionConf,
-      reasoning: product.decisionReason,
-      expectedMovement: product.decisionMove,
-      timeWindow: product.decisionWindow,
-    },
-    trend: product.trend as "up" | "down" | "stable",
-    lowestPrice: product.lowestPrice,
-    highestPrice: product.highestPrice,
-    averagePrice: product.averagePrice,
-    currentBestPrice: product.currentBestPrice,
-    currentBestPlatform: product.currentBestPlatform,
-  }))
+  return products.map((product: any) => {
+    const dynamicSignal = analyzePriceSignals(
+      product.priceHistory as any,
+      product.currentBestPrice,
+      product.name
+    )
+
+    return {
+      id: product.id,
+      name: product.name,
+      brand: product.brand,
+      category: product.category,
+      image: product.image,
+      description: product.description,
+      specifications: JSON.parse(product.specifications || "{}"),
+      platforms: product.platforms.map((p: any) => ({
+        id: p.id,
+        platformId: p.platformId,
+        name: p.name,
+        logo: p.logo,
+        price: p.price,
+        originalPrice: p.originalPrice,
+        effectivePrice: p.effectivePrice,
+        url: p.url,
+        inStock: p.inStock,
+        bankOffers: p.bankOffers ? JSON.parse(p.bankOffers) : undefined,
+      })),
+      priceHistory: product.priceHistory,
+      decision: {
+        type: dynamicSignal.type,
+        confidence: dynamicSignal.confidence,
+        reasoning: dynamicSignal.reasoning,
+        expectedMovement: dynamicSignal.expectedMovement,
+        timeWindow: dynamicSignal.timeWindow,
+      },
+      isShieldProtected: dynamicSignal.isShieldProtected,
+      trend: product.trend as "up" | "down" | "stable",
+      lowestPrice: product.lowestPrice ?? product.currentBestPrice,
+      highestPrice: product.highestPrice ?? product.currentBestPrice,
+      averagePrice: product.averagePrice ?? product.currentBestPrice,
+      currentBestPrice: product.currentBestPrice,
+      currentBestPlatform: product.currentBestPlatform,
+    }
+  })
 }
 
 export async function getProductById(id: string): Promise<Product | undefined> {
@@ -82,8 +91,8 @@ export async function getProductById(id: string): Promise<Product | undefined> {
     category: product.category,
     image: product.image,
     description: product.description,
-    specifications: JSON.parse(product.specifications),
-    platforms: product.platforms.map(p => ({
+    specifications: JSON.parse(product.specifications || "{}"),
+    platforms: product.platforms.map((p: any) => ({
       id: p.id,
       platformId: p.platformId,
       name: p.name,
@@ -105,9 +114,9 @@ export async function getProductById(id: string): Promise<Product | undefined> {
     },
     isShieldProtected: dynamicSignal.isShieldProtected,
     trend: product.trend as "up" | "down" | "stable",
-    lowestPrice: product.lowestPrice,
-    highestPrice: product.highestPrice,
-    averagePrice: product.averagePrice,
+    lowestPrice: product.lowestPrice ?? product.currentBestPrice,
+    highestPrice: product.highestPrice ?? product.currentBestPrice,
+    averagePrice: product.averagePrice ?? product.currentBestPrice,
     currentBestPrice: product.currentBestPrice,
     currentBestPlatform: product.currentBestPlatform,
   }
@@ -129,7 +138,7 @@ export async function searchProducts(query: string): Promise<SearchResult[]> {
     },
   })
 
-  return products.map(p => {
+  return products.map((p: any) => {
     const dynamicSignal = analyzePriceSignals(
       p.priceHistory as any,
       p.currentBestPrice,
@@ -151,7 +160,7 @@ export async function searchProducts(query: string): Promise<SearchResult[]> {
       expectedMovement: dynamicSignal.expectedMovement,
       timeWindow: dynamicSignal.timeWindow,
       isShieldProtected: dynamicSignal.isShieldProtected,
-      platforms: p.platforms.map(pl => ({
+      platforms: p.platforms.map((pl: any) => ({
         platformId: pl.platformId,
         name: pl.name,
         price: pl.price,
@@ -171,7 +180,7 @@ export async function getAllProducts(): Promise<SearchResult[]> {
     },
   })
 
-  return products.map(p => {
+  return products.map((p: any) => {
     const dynamicSignal = analyzePriceSignals(
       p.priceHistory as any,
       p.currentBestPrice,
@@ -193,7 +202,7 @@ export async function getAllProducts(): Promise<SearchResult[]> {
       expectedMovement: dynamicSignal.expectedMovement,
       timeWindow: dynamicSignal.timeWindow,
       isShieldProtected: dynamicSignal.isShieldProtected,
-      platforms: p.platforms.map(pl => ({
+      platforms: p.platforms.map((pl: any) => ({
         platformId: pl.platformId,
         name: pl.name,
         price: pl.price,
@@ -211,7 +220,7 @@ export async function getBrands(): Promise<{ name: string; count: number }[]> {
   })
 
   const brandCounts: Record<string, number> = {}
-  products.forEach((p) => {
+  products.forEach((p: any) => {
     brandCounts[p.brand] = (brandCounts[p.brand] || 0) + 1
   })
 
@@ -226,7 +235,7 @@ export async function getCategoryStats(): Promise<{ name: string; count: number 
   })
 
   const categoryCounts: Record<string, number> = {}
-  products.forEach((p) => {
+  products.forEach((p: any) => {
     categoryCounts[p.category] = (categoryCounts[p.category] || 0) + 1
   })
 

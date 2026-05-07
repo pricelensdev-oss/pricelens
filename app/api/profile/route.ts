@@ -9,6 +9,7 @@ export async function GET() {
 
   // Ensure user is synced
   const user = await syncUser();
+  if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
   return NextResponse.json({
     pincode: user.pincode,
