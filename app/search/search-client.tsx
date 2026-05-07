@@ -291,7 +291,7 @@ export function SearchPageClient({
     const withPersonalPrice = allProducts.map(p => {
       const personalizedPlatforms = p.platforms.map(pl => ({
         ...pl,
-        personalPrice: calculatePersonalizedPrice(pl as any, preferences)
+        personalPrice: calculatePersonalizedPrice(pl as any, preferences).personalizedPrice
       })).sort((a, b) => a.personalPrice - b.personalPrice)
       
       const bestPersonal = personalizedPlatforms.length > 0 ? personalizedPlatforms[0].personalPrice : p.currentBestPrice
