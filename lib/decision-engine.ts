@@ -12,7 +12,7 @@ export function analyzePriceSignals(
 ): DecisionSignal {
   if (!history || history.length === 0) {
     return {
-      type: "HOLD",
+      decision: "HOLD",
       confidence: 50,
       score: 50,
       verdict: "INSUFFICIENT DATA",

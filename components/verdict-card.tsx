@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import { Shield, AlertTriangle, Timer, TrendingDown, Target, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { DecisionSignal } from "@/lib/decision-engine"
+import { DecisionSignal } from "@/lib/types"
 
 interface VerdictCardProps {
   signal: DecisionSignal
@@ -11,9 +11,9 @@ interface VerdictCardProps {
 }
 
 export function VerdictCard({ signal, className }: VerdictCardProps) {
-  const isBuy = signal.type === "BUY"
-  const isWait = signal.type === "WAIT"
-  const isAvoid = signal.type === "AVOID"
+  const isBuy = signal.decision === "BUY"
+  const isWait = signal.decision === "WAIT"
+  const isAvoid = signal.decision === "AVOID"
 
   return (
     <motion.div
@@ -35,7 +35,7 @@ export function VerdictCard({ signal, className }: VerdictCardProps) {
               isBuy && "bg-primary/20 text-primary",
               isWait && "bg-warning/20 text-warning",
               isAvoid && "bg-danger/20 text-danger",
-              signal.type === "HOLD" && "bg-white/10 text-white/60"
+              signal.decision === "HOLD" && "bg-white/10 text-white/60"
             )}>
               PriceLens Smart Check
             </span>
