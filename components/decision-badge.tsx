@@ -24,18 +24,21 @@ export function DecisionBadge({
     BUY: "bg-primary/20 text-primary border border-primary/30 glow-success",
     WAIT: "bg-warning/20 text-warning border border-warning/30",
     HOLD: "bg-white/5 text-muted-foreground border border-white/10",
+    AVOID: "bg-destructive/20 text-destructive border border-destructive/30",
   }
 
   const decisionDots = {
     BUY: "bg-primary animate-pulse shadow-[0_0_8px_var(--primary)]",
     WAIT: "bg-warning",
     HOLD: "bg-muted-foreground/40",
+    AVOID: "bg-destructive shadow-[0_0_8px_var(--destructive)]",
   }
 
   const decisionLabels = {
     BUY: "BUY",
     WAIT: "WAIT",
     HOLD: "HOLD",
+    AVOID: "AVOID",
   }
 
   return (
