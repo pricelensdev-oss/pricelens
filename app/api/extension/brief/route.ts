@@ -23,8 +23,17 @@ export async function POST(req: NextRequest) {
     })
 
     // 2. Run the Intelligence Engine
+    const snapshots = (product?.snapshots || []).map(s => ({
+      date: s.timestamp.toISOString(),
+      price: s.price,
+      platform: s.platform,
+      sellerName: s.sellerName || undefined,
+      stockStatus: s.stockStatus || undefined,
+      imageHash: s.imageHash || undefined,
+    }))
+
     const decision = analyzePriceSignals(
-      product?.snapshots || [],
+      snapshots,
       price,
       title
     )
