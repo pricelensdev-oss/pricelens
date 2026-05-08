@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await request.json();
-  const { action, item, id } = body;
+  const { action, item, id, refundAmount } = body;
 
   const user = await db.user.findUnique({ where: { clerkId: userId } });
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -48,10 +48,19 @@ export async function POST(request: Request) {
       where: { userId: user.id, productId: id }
     });
   } else if (action === "claim") {
+    // 1. Update purchase status
     await db.protectedPurchase.updateMany({
       where: { userId: user.id, productId: id },
-      data: { shieldStatus: "claimed" }
+      data: { shieldStatus: "claimed", savingsRecovered: refundAmount || 0 }
     });
+
+    // 2. Add to wallet balance
+    if (refundAmount && refundAmount > 0) {
+      await db.user.update({
+        where: { id: user.id },
+        data: { walletBalance: { increment: refundAmount } }
+      });
+    }
   }
 
   return NextResponse.json({ success: true });

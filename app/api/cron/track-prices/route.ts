@@ -24,6 +24,7 @@ export async function GET(request: Request) {
 
     const trackResults = []
     const alertResults = []
+    const shieldResults = []
 
     // 2. Iterate through each platform and trigger the scraper
     for (const product of products) {
@@ -61,7 +62,7 @@ export async function GET(request: Request) {
         include: {
           user: true
         }
-      })
+      });
 
       for (const alert of alerts) {
         if (alert.user.email && alert.targetPrice) {
@@ -72,17 +73,57 @@ export async function GET(request: Request) {
             productBestPrice,
             `https://pricelens.app/product/${product.id}`,
             product.image
-          )
-
-          // In Watchlist model, we don't necessarily disable it, 
-          // but we could set targetPrice to null or similar if we wanted it to be a one-time alert.
-          // For now, we'll keep it active so the user continues to track.
+          );
 
           alertResults.push({
             user: alert.user.email,
             product: product.name,
             sent: emailResult.success
-          })
+          });
+        }
+      }
+
+      // 4. Smart Shield Monitoring (Outcome Guarantee)
+      const protectedPurchases = await db.protectedPurchase.findMany({
+        where: {
+          productId: product.id,
+          shieldStatus: "active"
+        },
+        include: { user: true }
+      });
+
+      for (const purchase of protectedPurchases) {
+        const daysSincePurchase = Math.floor((Date.now() - new Date(purchase.purchaseDate).getTime()) / (1000 * 60 * 60 * 24));
+        
+        // Window check (7 days)
+        if (daysSincePurchase > 7) {
+          await db.protectedPurchase.update({
+            where: { id: purchase.id },
+            data: { shieldStatus: "expired" }
+          });
+          continue;
+        }
+
+        // Drop check
+        if (productBestPrice < purchase.purchasePrice) {
+          const savings = purchase.purchasePrice - productBestPrice;
+          
+          // Create In-App Notification
+          await db.notification.create({
+            data: {
+              userId: purchase.userId,
+              title: "Price Shield Alert!",
+              message: `Price dropped by ₹${savings.toLocaleString()} on ${product.name}. Claim your match now!`,
+              type: "price_drop",
+              link: "/shield"
+            }
+          });
+
+          shieldResults.push({
+            user: purchase.user.email,
+            product: product.name,
+            savingsDetected: savings
+          });
         }
       }
     }
@@ -93,11 +134,12 @@ export async function GET(request: Request) {
         totalProcessed: trackResults.length,
         successful: trackResults.filter((r: any) => r.success).length
       },
-      alertsTriggered: alertResults
-    })
+      alertsTriggered: alertResults,
+      shieldAlerts: shieldResults
+    });
 
   } catch (error) {
-    console.error("[Cron Error]:", error)
-    return NextResponse.json({ error: "Tracking cycle failed" }, { status: 500 })
+    console.error("[Cron Error]:", error);
+    return NextResponse.json({ error: "Tracking cycle failed" }, { status: 500 });
   }
 }

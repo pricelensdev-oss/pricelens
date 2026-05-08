@@ -27,6 +27,21 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
   const [notifications, setNotifications] = useState<Notification[]>([])
   const { purchasedItems } = usePurchases()
 
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await fetch("/api/notifications")
+        if (res.ok) {
+          const data = await res.json()
+          setNotifications(data)
+        }
+      } catch (err) {
+        console.error("Failed to fetch notifications", err)
+      }
+    }
+    fetchNotifications()
+  }, [])
+
   // Automated background check for price drops on purchased items
   useEffect(() => {
     const checkSavings = async () => {
@@ -81,12 +96,30 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
 
   const unreadCount = notifications.filter(n => !n.read).length
 
-  const markAsRead = (id: string) => {
+  const markAsRead = async (id: string) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n))
+    try {
+      await fetch("/api/notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "markAsRead", id })
+      })
+    } catch (err) {
+      console.error("Failed to sync notification state", err)
+    }
   }
 
-  const markAllAsRead = () => {
+  const markAllAsRead = async () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+    try {
+      await fetch("/api/notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "markAllAsRead" })
+      })
+    } catch (err) {
+      console.error("Failed to sync notification state", err)
+    }
   }
 
   const clearNotifications = () => {

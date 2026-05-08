@@ -14,8 +14,10 @@ export function CrowdPulse({ productId, currentPrice, targetPrice }: CrowdPulseP
   const [pulse, setPulse] = useState({
     waiting: 0,
     velocity: 0,
-    heat: 0
+    heat: 0,
+    consensus: 0
   })
+  const [activities, setActivities] = useState<string[]>([])
 
   useEffect(() => {
     // Deterministic simulation based on productId
@@ -23,13 +25,30 @@ export function CrowdPulse({ productId, currentPrice, targetPrice }: CrowdPulseP
     const baseWaiting = (hash % 1000) + 150
     const baseVelocity = (hash % 15) + 5
     const baseHeat = (hash % 40) + 40
+    const baseConsensus = (hash % 20) + 70 // 70-90% consensus
 
     setPulse({
       waiting: baseWaiting,
       velocity: baseVelocity,
-      heat: baseHeat
+      heat: baseHeat,
+      consensus: baseConsensus
     })
-  }, [productId])
+
+    // Simulate recent activity feed
+    const activityPool = [
+      "Someone just set a target at ₹" + (currentPrice * 0.9).toLocaleString(),
+      "Price match verified for a user in Mumbai",
+      "Shield protection activated 4 mins ago",
+      "3 users moved this to 'Ready to Buy'",
+      "Large demand detected for " + (targetPrice ? `₹${targetPrice.toLocaleString()}` : "this price")
+    ]
+    
+    // Pick 2 random-ish activities based on hash
+    setActivities([
+      activityPool[hash % activityPool.length],
+      activityPool[(hash + 1) % activityPool.length]
+    ])
+  }, [productId, currentPrice, targetPrice])
 
   return (
     <div className="space-y-6">
@@ -54,7 +73,13 @@ export function CrowdPulse({ productId, currentPrice, targetPrice }: CrowdPulseP
 
       <div className="space-y-3">
         <div className="flex justify-between items-end">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Demand Level</p>
+          <div className="flex items-center gap-2">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Demand Level</p>
+            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-primary/10 border border-primary/20">
+               <Zap className="h-2 w-2 text-primary animate-pulse" />
+               <span className="text-[8px] font-black text-primary uppercase">{pulse.consensus}% Consensus</span>
+            </div>
+          </div>
           <span className="text-[10px] font-mono text-primary">{pulse.heat}%</span>
         </div>
         <div className="h-1.5 w-full rounded-full bg-white/5 overflow-hidden">
@@ -70,8 +95,18 @@ export function CrowdPulse({ productId, currentPrice, targetPrice }: CrowdPulseP
         </div>
       </div>
 
+      <div className="space-y-2 pt-2 border-t border-white/5">
+        <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/40">Live Pulse</p>
+        {activities.map((activity, i) => (
+          <div key={i} className="flex items-center gap-2 animate-in fade-in slide-in-from-left-2 duration-500" style={{ animationDelay: `${i * 200}ms` }}>
+            <div className="h-1 w-1 rounded-full bg-primary/40" />
+            <p className="text-[10px] text-muted-foreground/80">{activity}</p>
+          </div>
+        ))}
+      </div>
+
       <p className="text-[10px] leading-relaxed text-muted-foreground/80 italic border-l border-white/10 pl-3">
-        "Price Update: Demand for {targetPrice ? `₹${targetPrice.toLocaleString()}` : 'this price point'} is growing. Our smart system predicts stock may run low if a price drop occurs soon."
+        "Market Logic: {pulse.consensus}% of shoppers are waiting for {targetPrice ? `₹${targetPrice.toLocaleString()}` : 'a lower price'}. We recommend setting an alert to secure stock during the next drop."
       </p>
     </div>
   )

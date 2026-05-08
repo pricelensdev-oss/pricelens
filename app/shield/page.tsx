@@ -15,6 +15,7 @@ import type { SearchResult } from "@/lib/types"
 export default function ShieldDashboard() {
   const { purchasedItems, removePurchase } = usePurchases()
   const [products, setProducts] = useState<SearchResult[]>([])
+  const [profile, setProfile] = useState<{ walletBalance: number } | null>(null)
   const [loading, setLoading] = useState(true)
   const [claimingId, setClaimingId] = useState<string | null>(null)
   const [claimedIds, setClaimedIds] = useState<string[]>([])
@@ -22,13 +23,22 @@ export default function ShieldDashboard() {
   useEffect(() => {
     async function load() {
       try {
-        const response = await fetch("/api/products")
-        if (response.ok) {
-          const data = await response.json()
+        const [productsRes, profileRes] = await Promise.all([
+          fetch("/api/products"),
+          fetch("/api/profile")
+        ])
+        
+        if (productsRes.ok) {
+          const data = await productsRes.json()
           setProducts(data)
         }
+        
+        if (profileRes.ok) {
+          const data = await profileRes.json()
+          setProfile(data)
+        }
       } catch (err) {
-        console.error("Failed to load live market data", err)
+        console.error("Failed to load dashboard data", err)
       } finally {
         setLoading(false)
       }
@@ -40,13 +50,27 @@ export default function ShieldDashboard() {
     return products.find(p => p.id === id)?.currentBestPrice || 0
   }
 
-  const handleClaim = async (id: string) => {
+  const handleClaim = async (id: string, refundAmount: number) => {
     setClaimingId(id)
-    // Simulate smart audit process
-    await new Promise(resolve => setTimeout(resolve, 3000))
-    setClaimingId(null)
-    setClaimedIds(prev => [...prev, id])
-    toast.success("Price Match Verified! ₹" + (getLivePrice(id) > 0 ? (purchasedItems.find(i => i.id === id)?.purchasePrice || 0) - getLivePrice(id) : 0).toLocaleString() + " added to your wallet.")
+    try {
+      const response = await fetch("/api/purchases", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "claim", id, refundAmount })
+      })
+      
+      if (response.ok) {
+        setClaimedIds(prev => [...prev, id])
+        setProfile(prev => prev ? { ...prev, walletBalance: prev.walletBalance + refundAmount } : prev)
+        toast.success("Price Match Verified! ₹" + refundAmount.toLocaleString() + " added to your wallet.")
+      } else {
+        throw new Error("Failed to claim")
+      }
+    } catch (err) {
+      toast.error("Audit failed. Please try again later.")
+    } finally {
+      setClaimingId(null)
+    }
   }
 
   return (
@@ -65,7 +89,7 @@ export default function ShieldDashboard() {
           <div className="flex items-center gap-3">
              <div className="hidden sm:flex flex-col items-end px-4 border-r border-white/5">
                 <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Wallet Balance</span>
-                <span className="text-sm font-black text-primary">₹1,250.00</span>
+                <span className="text-sm font-black text-primary">₹{profile?.walletBalance.toLocaleString() || "0.00"}</span>
              </div>
              <Button variant="outline" className="gap-2 border-white/5 bg-white/5 hover:bg-white/10 transition-all rounded-xl">
                 <RefreshCw className="h-4 w-4" /> Sync Prices
@@ -172,7 +196,7 @@ export default function ShieldDashboard() {
                             <Button 
                               size="lg" 
                               disabled={isClaiming}
-                              onClick={() => handleClaim(item.id)}
+                              onClick={() => handleClaim(item.id, potentialRefund)}
                               className="w-full sm:w-auto h-12 px-8 bg-success hover:bg-success/90 text-success-foreground font-bold rounded-xl gap-2 transition-all active:scale-95"
                             >
                               {isClaiming ? (
