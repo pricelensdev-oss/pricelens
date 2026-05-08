@@ -14,10 +14,10 @@ export default async function HomePage() {
   const { userId } = await auth()
   const products = await getAllProducts()
   
-  // Mocking the top "Conviction" signals for the landing page
+  // Using the pre-calculated intelligence from our Oracle Ingestion
   const featuredSignals = products.slice(0, 2).map(p => ({
     product: p,
-    signal: analyzePriceSignals(p.history, p.currentPrice, p.name)
+    signal: p as any // SearchResult has the same fields needed by VerdictCard
   }))
 
   return (
