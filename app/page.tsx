@@ -10,9 +10,14 @@ import { auth } from "@clerk/nextjs/server"
 export const dynamic = "force-dynamic"
 
 export default async function HomePage() {
-  const { userId } = await auth()
-  const products = await getAllProducts()
-  const featuredProducts = products.slice(0, 6)
+  console.log("[DEBUG]: HomePage starting...");
+  const { userId } = await auth();
+  console.log("[DEBUG]: Auth checked, userId:", userId);
+  
+  const products = await getAllProducts();
+  console.log("[DEBUG]: Products fetched, count:", products.length);
+  
+  const featuredProducts = products.slice(0, 6);
 
   return (
     <AppShell>
