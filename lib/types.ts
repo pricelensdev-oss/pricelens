@@ -36,6 +36,7 @@ export interface Product {
   specifications: Record<string, any>
   platforms: Platform[]
   priceHistory: PricePoint[]
+  snapshots?: any[] // New Oracle Snapshots
   verificationState: "VERIFIED" | "PARTIALLY_VERIFIED" | "LOW_CONFIDENCE" | "FAILED"
   confidenceScore?: number
   decision: {

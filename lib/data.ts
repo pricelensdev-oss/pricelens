@@ -118,7 +118,14 @@ export async function getProductById(id: string): Promise<Product | undefined> {
       inStock: p.inStock,
       bankOffers: p.bankOffers ? JSON.parse(p.bankOffers) : undefined,
     })),
-    priceHistory: product.priceHistory,
+    priceHistory: product.snapshots.map((s: any) => ({
+      date: s.timestamp.toISOString(),
+      price: s.price,
+      platform: s.platform,
+      sellerName: s.sellerName || undefined,
+      stockStatus: s.stockStatus || undefined,
+      imageHash: s.imageHash || undefined,
+    })),
     decision: {
       type: dynamicSignal.type,
       confidence: dynamicSignal.confidence,

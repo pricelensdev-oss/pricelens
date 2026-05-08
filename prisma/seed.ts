@@ -9,7 +9,7 @@ async function main() {
   await db.protectedPurchase.deleteMany()
   await db.watchlist.deleteMany()
   await db.platform.deleteMany()
-  await db.priceHistory.deleteMany()
+  await db.productSnapshot.deleteMany()
   await db.product.deleteMany()
   await db.user.deleteMany()
 
@@ -63,11 +63,13 @@ async function main() {
           }))
         },
 
-        priceHistory: {
+        snapshots: {
           create: product.priceHistory.map(ph => ({
-            date: ph.date,
+            timestamp: new Date(ph.date),
             price: ph.price,
-            platform: ph.platform
+            platform: ph.platform,
+            sellerName: ph.platform,
+            inStock: true
           }))
         }
       }

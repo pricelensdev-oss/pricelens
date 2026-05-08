@@ -120,10 +120,10 @@ export default async function HomePage() {
               Join 50,000+ smart shoppers using PriceLens to shield themselves from market manipulation.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="xl" className="bg-primary text-black font-black uppercase tracking-widest px-10 h-16 rounded-2xl hover:scale-105 transition-all">
+              <Button size="lg" className="bg-primary text-black font-black uppercase tracking-widest px-10 h-16 rounded-2xl hover:scale-105 transition-all">
                 Add to Browser — Free
               </Button>
-              <Button variant="outline" size="xl" className="border-white/10 text-white font-black uppercase tracking-widest px-10 h-16 rounded-2xl hover:bg-white/5">
+              <Button variant="outline" size="lg" className="border-white/10 text-white font-black uppercase tracking-widest px-10 h-16 rounded-2xl hover:bg-white/5">
                 Learn our AI
               </Button>
             </div>

@@ -74,7 +74,7 @@ import { getNextMajorEvent } from "./seasonal-events"
 async function recalculateProductIntelligence(productId: string) {
   const product = await db.product.findUnique({
     where: { id: productId },
-    include: { platforms: true, priceHistory: true }
+    include: { platforms: true, snapshots: true }
   })
 
   if (!product || product.platforms.length === 0) return
@@ -168,12 +168,14 @@ async function recordPrice(productId: string, result: ScrapeResult) {
         lastVerifiedAt: new Date()
       }
     }),
-    db.priceHistory.create({
+    db.productSnapshot.create({
       data: {
         productId,
         price: result.price,
         platform: result.platformId,
-        date: today
+        sellerName: result.platformId, // Fallback for simple scraper
+        inStock: result.inStock,
+        timestamp: new Date()
       }
     })
   ])
