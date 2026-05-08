@@ -35,11 +35,11 @@
   
   --radius: 0.75rem;
 
-  /* State Colors */
-  --success: #4CAF50;
-  --warning: #E8FF5A;
-  --danger: #FF5C5C;
-  --cta-blue: #8FA9D6;
+  /* State Colors 2.0 */
+  --success: #C8F31D; /* Electric Cyan */
+  --warning: #F3C81D; /* Muted Amber */
+  --danger: #FF5C5C;  /* Desaturated Crimson */
+  --neutral: #6C7075;
 }
 
 @theme inline {
@@ -72,7 +72,6 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-danger: var(--danger);
-  --color-cta-blue: var(--cta-blue);
 }
 
 @layer base {
@@ -80,127 +79,72 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground selection:bg-primary/30 selection:text-primary;
+    @apply bg-background text-foreground selection:bg-primary/30 selection:text-primary overflow-x-hidden;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-  }
-  h1, h2, h3, h4 {
-    @apply font-display tracking-tight;
   }
 }
 
 /* ─── Luxury-Tech Utility Classes ────────────────────────────────── */
 
-/* High-end Glassmorphism */
 .glass {
-  @apply bg-card/60 backdrop-blur-2xl border border-white/5;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  @apply bg-card/40 backdrop-blur-3xl border border-white/5;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
-.glass-header {
-  @apply sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-white/5;
-}
-
-/* Premium Card Interaction */
 .luxury-card {
-  @apply transition-all duration-700;
+  @apply transition-all duration-700 relative overflow-hidden;
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  background: linear-gradient(165deg, var(--card) 0%, #121417 100%);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: linear-gradient(165deg, var(--card) 0%, #0E0F11 100%);
+  border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.luxury-card:hover {
-  @apply -translate-y-2 border-primary/40;
-  box-shadow: 0 40px 80px -20px rgba(200, 243, 29, 0.15);
-}
-
-/* Glows */
-.glow-primary {
-  box-shadow: 0 0 30px -5px var(--primary);
-}
-
-.glow-success {
-  box-shadow: 0 0 30px -5px var(--success);
-}
-
-.text-glow {
-  text-shadow: 0 0 12px var(--primary);
-}
-
-/* ─── Neural Mesh Background ───────────────────────────────── */
-.neural-mesh {
-  position: relative;
-}
-
-.neural-mesh::before {
+.luxury-card::before {
   content: "";
-  position: absolute;
-  inset: 0;
-  background-image: 
-    radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.03) 1px, transparent 0);
-  background-size: 24px 24px;
-  mask-image: radial-gradient(circle at center, black, transparent 80%);
+  @apply absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 transition-opacity duration-700;
+}
+
+.luxury-card:hover::before {
+  @apply opacity-100;
+}
+
+/* Verdict Animations */
+
+@keyframes pulse-cyan {
+  0%, 100% { box-shadow: 0 0 20px rgba(200, 243, 29, 0.2); border-color: rgba(200, 243, 29, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(200, 243, 29, 0.4); border-color: rgba(200, 243, 29, 0.6); }
+}
+
+@keyframes breathe-amber {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
+.verdict-buy {
+  animation: pulse-cyan 3s infinite ease-in-out;
+  @apply border-primary/50 bg-primary/5;
+}
+
+.verdict-wait {
+  @apply border-warning/30 bg-warning/5;
+}
+
+.verdict-avoid {
+  @apply border-danger/30 bg-danger/5;
+}
+
+/* Search Bar Spotlight */
+.search-spotlight:focus-within {
+  @apply border-primary/50;
+  box-shadow: 0 0 100px -20px rgba(200, 243, 29, 0.2);
 }
 
 /* ─── Animations ────────────────────────────────────────────── */
 
-@keyframes slide-up-fade {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.animate-stagger-1 { animation: slide-up-fade 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.animate-stagger-2 { animation: slide-up-fade 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; opacity: 0; }
-.animate-stagger-3 { animation: slide-up-fade 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards; opacity: 0; }
-.animate-stagger-4 { animation: slide-up-fade 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; opacity: 0; }
-
-@keyframes buy-pulse-luxury {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(200, 243, 29, 0.4); transform: scale(1); }
-  50% { box-shadow: 0 0 25px 4px rgba(200, 243, 29, 0.2); transform: scale(1.04); }
-}
-
-.buy-verdict-pulse {
-  animation: buy-pulse-luxury 2.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 5px;
-}
-::-webkit-scrollbar-track {
-  @apply bg-transparent;
-}
-::-webkit-scrollbar-thumb {
-  @apply bg-primary/20 rounded-full hover:bg-primary/40 transition-colors;
-}
-
-/* Hero Gradient */
-.hero-gradient {
-  background: radial-gradient(circle at 50% 50%, rgba(200, 243, 29, 0.1) 0%, transparent 50%);
-}
-
-.shadow-glow-primary {
-  box-shadow: 0 0 20px -5px var(--primary);
-}
-
-.shadow-glow-success {
-  box-shadow: 0 0 20px -5px var(--success);
-}
-
-/* Button & Card Micro-interactions */
-.btn-luxury {
-  @apply relative overflow-hidden transition-all duration-300 active:scale-95;
-}
-
-.btn-luxury::after {
-  content: "";
-  @apply absolute inset-0 bg-white/10 opacity-0 transition-opacity;
-}
-
-.btn-luxury:hover::after {
-  @apply opacity-100;
-}
-
-/* Smooth Page Load */
-.page-fade-in {
-  animation: slide-up-fade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.animate-reveal {
+  animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

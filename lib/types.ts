@@ -1,18 +1,19 @@
-export type DecisionType = "BUY" | "WAIT" | "HOLD"
+export type DecisionType = "BUY" | "WAIT" | "HOLD" | "AVOID"
 export type Decision = DecisionType
 export type TrendType = "up" | "down" | "stable"
 export type Trend = TrendType
 
-export interface Platform {
-  id: string
-  platformId: string // amazon, flipkart, etc.
+  externalId?: string
+  listingId?: string
   name: string
   logo: string
   price: number
   originalPrice: number
-  effectivePrice: number // After bank offers/discounts
+  effectivePrice: number
   url: string
   inStock: boolean
+  sellerName?: string
+  variantInfo?: Record<string, any>
   bankOffers?: string[]
 }
 
@@ -20,6 +21,9 @@ export interface PricePoint {
   date: string
   price: number
   platform: string
+  sellerName?: string
+  stockStatus?: string
+  imageHash?: string
 }
 
 export interface Product {
@@ -29,15 +33,22 @@ export interface Product {
   category: string
   image: string
   description: string
-  specifications: Record<string, string>
+  specifications: Record<string, any>
   platforms: Platform[]
   priceHistory: PricePoint[]
+  verificationState: "VERIFIED" | "PARTIALLY_VERIFIED" | "LOW_CONFIDENCE" | "FAILED"
+  confidenceScore?: number
   decision: {
     type: DecisionType
     confidence: number // 0-100
+    score: number // 0-100 unified score
+    verdict: string // "STRONG BUY", etc.
     reasoning: string
     expectedMovement: string
     timeWindow: string
+    isFakeSale: boolean
+    fairValue: number
+    overpriceAmount: number
   }
   isShieldProtected: boolean
   shieldReasoning?: string
@@ -67,6 +78,8 @@ export interface SearchResult {
   originalPrice: number
   decision: DecisionType
   confidence: number
+  score: number
+  verdict: string
   trend: TrendType
   platforms: SearchPlatform[]
   dealScore: number
@@ -74,4 +87,9 @@ export interface SearchResult {
   expectedMovement: string
   timeWindow: string
   isShieldProtected: boolean
+  isFakeSale: boolean
+  fairValue: number
+  overpriceAmount: number
+  verificationState: "VERIFIED" | "PARTIALLY_VERIFIED" | "LOW_CONFIDENCE" | "FAILED"
+  driftAlert: boolean
 }

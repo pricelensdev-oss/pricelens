@@ -5,8 +5,22 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "images.unsplash.com",
-        port: "",
-        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "m.media-amazon.com",
+      },
+      {
+        protocol: "https",
+        hostname: "rukminim2.flixcart.com",
+      },
+      {
+        protocol: "https",
+        hostname: "static-assets-web.flixcart.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images-na.ssl-images-amazon.com",
       },
     ],
   },

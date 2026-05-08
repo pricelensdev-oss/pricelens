@@ -52,7 +52,7 @@ export function DecisionBadge({
       </span>
       {showConfidence && confidence !== undefined && (
         <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40">
-          {confidence}% AI Confidence
+          {confidence}% Confidence
         </span>
       )}
     </div>

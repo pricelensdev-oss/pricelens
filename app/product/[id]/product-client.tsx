@@ -130,15 +130,15 @@ export function ProductClient({ product }: { product: Product }) {
         const updated = watchlist.filter((wid: string) => wid !== id)
         localStorage.setItem("pricelens-watchlist", JSON.stringify(updated))
         setIsInWatchlist(false)
-        toast.success("Intelligence Unsubscribed", {
-          description: "Tracking data removed from local cache."
+        toast.success("Stopped Tracking", {
+          description: "This item is no longer in your list."
         })
       } else {
         watchlist.push(id)
         localStorage.setItem("pricelens-watchlist", JSON.stringify(watchlist))
         setIsInWatchlist(true)
-        toast.success("Monitoring Activated", {
-          description: "Smart engine is now tracking market shifts."
+        toast.success("Now Tracking", {
+          description: "We will notify you if the price drops."
         })
       }
       return
@@ -155,8 +155,8 @@ export function ProductClient({ product }: { product: Product }) {
 
       if (response.ok) {
         setIsInWatchlist(!isInWatchlist)
-        toast.success(isInWatchlist ? "Subscription Removed" : "Cloud Sync Active", {
-          description: isInWatchlist ? "Data removed from your profile." : "Monitoring across all your devices."
+        toast.success(isInWatchlist ? "Removed from List" : "Tracking on all devices", {
+          description: isInWatchlist ? "Item removed from your profile." : "You'll get alerts on all your devices."
         })
       }
     } catch (err) {
@@ -284,7 +284,7 @@ export function ProductClient({ product }: { product: Product }) {
             className="group inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-secondary-foreground transition-colors hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            Back to Price Hub
+            Back to Search
           </Link>
         </nav>
 
@@ -308,7 +308,7 @@ export function ProductClient({ product }: { product: Product }) {
             {/* Specifications */}
             <Card className="luxury-card border-none">
               <CardHeader>
-                <CardTitle className="font-display text-xl tracking-tight text-foreground">Technical Specifications</CardTitle>
+                <CardTitle className="font-display text-xl tracking-tight text-foreground">Product Details</CardTitle>
               </CardHeader>
               <CardContent>
                 <dl className="space-y-4">
@@ -368,7 +368,7 @@ export function ProductClient({ product }: { product: Product }) {
                     <div className="mt-2 flex items-center gap-1.5 group/ppe cursor-help">
                       <Zap className="h-3 w-3 text-primary animate-pulse" />
                       <p className="text-[9px] font-bold text-primary/60 uppercase tracking-widest border-b border-primary/20 border-dotted">
-                        Effective Price (Best Savings)
+                        Best Possible Savings
                       </p>
                       <div className="h-4 w-[1px] bg-white/10 mx-1" />
                       <div className="flex items-center gap-1 text-[9px] font-bold text-muted-foreground uppercase tracking-tighter">
@@ -483,8 +483,8 @@ export function ProductClient({ product }: { product: Product }) {
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <h5 className="text-xs font-black uppercase tracking-widest text-white">PriceLens Shield</h5>
-                            <span className="rounded-full bg-success/20 px-2 py-0.5 text-[8px] font-bold text-success border border-success/20 uppercase tracking-tighter">Verified</span>
+                            <h5 className="text-xs font-black uppercase tracking-widest text-white">Best Price Guarantee</h5>
+                            <span className="rounded-full bg-success/20 px-2 py-0.5 text-[8px] font-bold text-success border border-success/20 uppercase tracking-tighter">Active</span>
                           </div>
                           <p className="mt-1 text-[10px] text-secondary-foreground leading-tight">
                             AI-Guaranteed. If the price drops within 7 days of your purchase, we cover the difference.
@@ -585,7 +585,7 @@ export function ProductClient({ product }: { product: Product }) {
                       <Heart
                         className={cn("h-4 w-4 mr-2", isInWatchlist ? "fill-primary text-primary" : "")}
                       />
-                      {isInWatchlist ? "Monitored" : "Track Price"}
+                      {isInWatchlist ? "Added to List" : "Track Price"}
                     </Button>
 
                     {!isPurchased(product.id) ? (
@@ -617,7 +617,7 @@ export function ProductClient({ product }: { product: Product }) {
                             <Calendar className="h-5 w-5 text-primary" />
                           </div>
                           <div>
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-primary/60">Next Cycle</p>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-primary/60">Next Price Drop</p>
                             <h5 className="text-xs font-bold text-white">Independence Day Sale</h5>
                           </div>
                         </div>
@@ -745,12 +745,13 @@ export function ProductClient({ product }: { product: Product }) {
             <CardHeader className="pb-2">
               <CardTitle className="text-lg text-foreground flex items-center gap-2">
                 <ArrowLeftRight className="h-4 w-4 text-primary" />
-                90-Day Market Context
+                90-Day Price History
               </CardTitle>
             </CardHeader>
             <CardContent>
               <PriceChart 
-                data={product.priceHistory} 
+                data={product.snapshots} 
+                className="h-[300px] w-full" 
                 targetPrice={hasAlert ? Number(alertPrice) : undefined} 
                 onPointClick={(price) => {
                   setAlertPrice(price.toString())

@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "PriceLens: Simple Price Tracker",
+  "version": "2.0.0",
+  "description": "Smart price tracking for Amazon & Flipkart. Never overpay again.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://*.amazon.in/*",
+    "https://*.flipkart.com/*",
+    "https://pricelens.in/*",
+    "https://pricelens-dev.vercel.app/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.amazon.in/*",
+        "https://*.flipkart.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["overlay.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

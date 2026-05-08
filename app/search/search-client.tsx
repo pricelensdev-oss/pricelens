@@ -27,7 +27,7 @@ import {
 import { calculatePersonalizedPrice } from "@/lib/ppe"
 import { usePreferences } from "@/hooks/use-preferences"
 
-type SortOption = "relevance" | "price-asc" | "price-desc" | "discount" | "confidence"
+type SortOption = "relevance" | "price-asc" | "price-desc" | "discount" | "score"
 
 function ProductGrid({ products, isLoading }: { products: any[], isLoading?: boolean }) {
   if (isLoading) {
@@ -124,26 +124,27 @@ function FilterSidebar({
     <div className={`space-y-5 ${className}`}>
       {/* Decision Filter */}
       <div>
-        <h3 className="mb-2.5 text-sm font-semibold text-foreground">AI Recommendation</h3>
+        <h3 className="mb-2.5 text-sm font-bold uppercase tracking-widest text-white/40">Our Recommendation</h3>
         <div className="space-y-2">
           {[
-            { label: "BUY NOW", value: "BUY" as DecisionType, color: "bg-success" },
+            { label: "GREAT DEAL", value: "BUY" as DecisionType, color: "bg-primary" },
             { label: "WAIT", value: "WAIT" as DecisionType, color: "bg-warning" },
-            { label: "HOLD", value: "HOLD" as DecisionType, color: "bg-muted-foreground" },
+            { label: "SKIP", value: "AVOID" as DecisionType, color: "bg-danger" },
+            { label: "STEADY", value: "HOLD" as DecisionType, color: "bg-white/20" },
           ].map((option) => (
             <label
               key={option.label}
-              className="flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-card p-2.5 transition-colors hover:border-primary/50 sm:p-3"
+              className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3 transition-all hover:border-primary/30"
             >
               <input
                 type="checkbox"
                 checked={filters.decisions.includes(option.value)}
                 onChange={() => toggleDecision(option.value)}
-                className="h-4 w-4 rounded border-border bg-input text-primary focus:ring-primary"
+                className="h-4 w-4 rounded border-white/10 bg-black text-primary focus:ring-primary"
               />
               <div className="flex items-center gap-2">
-                <span className={`h-2 w-2 rounded-full ${option.color}`} />
-                <span className="text-sm text-foreground">{option.label}</span>
+                <span className={`h-1.5 w-1.5 rounded-full ${option.color} shadow-[0_0_8px_rgba(0,0,0,0.5)]`} />
+                <span className="text-xs font-bold text-white/80 tracking-tight">{option.label}</span>
               </div>
             </label>
           ))}
@@ -235,9 +236,9 @@ function FilterSidebar({
         <h3 className="mb-2.5 text-sm font-semibold text-foreground">Price Trend</h3>
         <div className="space-y-2">
           {[
-            { label: "Trending Down ↓", value: "down" as TrendType, color: "text-success" },
-            { label: "Stable →", value: "stable" as TrendType, color: "text-muted-foreground" },
-            { label: "Trending Up ↑", value: "up" as TrendType, color: "text-danger" },
+            { label: "Price Falling ↓", value: "down" as TrendType, color: "text-success" },
+            { label: "Steady →", value: "stable" as TrendType, color: "text-muted-foreground" },
+            { label: "Price Rising ↑", value: "up" as TrendType, color: "text-danger" },
           ].map((trend) => (
             <label
               key={trend.label}
@@ -282,6 +283,13 @@ export function SearchPageClient({
   })
 
   const [isDiscovering, setIsDiscovering] = useState(false)
+  const [discoveryStage, setDiscoveryStage] = useState(0)
+  const discoveryStages = [
+    "Identifying Marketplace ID...",
+    "Extracting High-Res Specs...",
+    "Verifying Price Integrity...",
+    "Finalizing Product Oracle..."
+  ]
   const lastDiscoveredQuery = useRef<string | null>(null)
   const router = useRouter()
 
@@ -350,8 +358,8 @@ export function SearchPageClient({
           const discountB = ((b.originalPrice - b.personalizedPrice) / b.originalPrice) * 100
           return discountB - discountA
         })
-      case "confidence":
-        return [...filtered].sort((a, b) => b.confidence - a.confidence)
+      case "score":
+        return [...filtered].sort((a, b) => b.score - a.score)
       default:
         return filtered
     }
@@ -366,6 +374,12 @@ export function SearchPageClient({
           console.group(`🚀 PriceLens AI: Discovering "${query}"`)
           console.log("Status: Local results low. Triggering Agentic Discovery...")
           setIsDiscovering(true)
+          setDiscoveryStage(0)
+          
+          const progressInterval = setInterval(() => {
+            setDiscoveryStage(prev => Math.min(prev + 1, 3))
+          }, 3000)
+
           try {
             const response = await fetch("/api/search/discover", {
               method: "POST",
@@ -374,15 +388,19 @@ export function SearchPageClient({
             })
             if (response.ok) {
               const data = await response.json()
-              console.log(`Success: Found ${data.count} new items. Refreshing UI...`)
+              console.log(`Success: Found ${data.count} items.`)
+              clearInterval(progressInterval)
+              setDiscoveryStage(3)
               if (data.count > 0) {
                 router.refresh()
               }
             } else {
               console.error("Discovery API returned an error")
+              clearInterval(progressInterval)
             }
           } catch (err) {
             console.error("Discovery request failed", err)
+            clearInterval(progressInterval)
           } finally {
             setIsDiscovering(false)
             console.groupEnd()
@@ -512,11 +530,11 @@ export function SearchPageClient({
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="relevance">Relevance</SelectItem>
+                    <SelectItem value="relevance">Best Match</SelectItem>
                     <SelectItem value="price-asc">Price: Low to High</SelectItem>
                     <SelectItem value="price-desc">Price: High to Low</SelectItem>
                     <SelectItem value="discount">Biggest Discount</SelectItem>
-                    <SelectItem value="confidence">AI Confidence</SelectItem>
+                    <SelectItem value="score">Best Deal Score</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -597,10 +615,21 @@ export function SearchPageClient({
                   <Loader2 className="h-10 w-10 animate-spin text-primary opacity-20" />
                   <Sparkles className="absolute left-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 text-primary animate-pulse" />
                 </div>
-                <h3 className="text-lg font-bold text-foreground">AI is discovering fresh deals...</h3>
+                <h3 className="text-lg font-bold text-foreground">{discoveryStages[discoveryStage]}</h3>
                 <p className="mt-2 max-w-sm text-sm text-muted-foreground">
-                  We are searching major platforms for {query} and analyzing 90-day price trends to find you the best recommendation.
+                  Our Oracle is performing a deep scan of marketplace metadata to ensure 100% accuracy.
                 </p>
+                <div className="mt-6 flex gap-2">
+                  {[0, 1, 2, 3].map((s) => (
+                    <div 
+                      key={s} 
+                      className={cn(
+                        "h-1.5 w-12 rounded-full transition-all duration-500",
+                        s <= discoveryStage ? "bg-primary shadow-[0_0_8px_rgba(var(--primary),0.5)]" : "bg-white/10"
+                      )} 
+                    />
+                  ))}
+                </div>
                 <div className="mt-6 flex gap-1.5">
                   <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-primary/60 [animation-delay:-0.3s]" />
                   <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-primary/60 [animation-delay:-0.15s]" />

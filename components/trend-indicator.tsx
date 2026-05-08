@@ -28,17 +28,17 @@ export function TrendIndicator({
   const trendConfig = {
     up: {
       icon: TrendingUp,
-      label: "Trending Up",
+      label: "Price Rising",
       color: "text-danger",
     },
     down: {
       icon: TrendingDown,
-      label: "Trending Down",
+      label: "Price Falling",
       color: "text-success",
     },
     stable: {
       icon: Minus,
-      label: "Stable",
+      label: "Steady",
       color: "text-muted-foreground",
     },
   }

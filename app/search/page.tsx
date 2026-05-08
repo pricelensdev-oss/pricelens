@@ -7,13 +7,24 @@ export const metadata = {
 }
 
 import { searchProducts, getAllProducts, getBrands, getCategoryStats } from "@/lib/data"
+import { discoverProducts } from "@/lib/scraper"
+import { redirect } from "next/navigation"
 
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>
+  searchParams: Promise<{ q?: string; analyze?: string }>
 }) {
-  const { q } = await searchParams
+  const { q, analyze } = await searchParams
+
+  // Handle Smart Link Analysis
+  if (analyze) {
+    const productIds = await discoverProducts(analyze)
+    if (productIds.length > 0) {
+      redirect(`/product/${productIds[0]}`)
+    }
+  }
+
   const products = q ? await searchProducts(q) : await getAllProducts()
   const brands = await getBrands()
   const categoryStats = await getCategoryStats()

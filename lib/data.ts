@@ -17,13 +17,13 @@ export async function getProductsByIds(ids: string[]): Promise<Product[]> {
     where: { id: { in: ids } },
     include: {
       platforms: true,
-      priceHistory: true,
+      snapshots: true,
     },
   })
 
   return products.map((product: any) => {
     const dynamicSignal = analyzePriceSignals(
-      product.priceHistory as any,
+      product.snapshots as any,
       product.currentBestPrice,
       product.name
     )
@@ -57,13 +57,18 @@ export async function getProductsByIds(ids: string[]): Promise<Product[]> {
         inStock: p.inStock,
         bankOffers: p.bankOffers ? JSON.parse(p.bankOffers) : undefined,
       })),
-      priceHistory: product.priceHistory,
+      priceHistory: product.snapshots,
       decision: {
         type: dynamicSignal.type,
         confidence: dynamicSignal.confidence,
+        score: dynamicSignal.score,
+        verdict: dynamicSignal.verdict,
         reasoning: dynamicSignal.reasoning,
         expectedMovement: dynamicSignal.expectedMovement,
         timeWindow: dynamicSignal.timeWindow,
+        isFakeSale: dynamicSignal.isFakeSale,
+        fairValue: dynamicSignal.fairValue,
+        overpriceAmount: dynamicSignal.overpriceAmount,
       },
       isShieldProtected: dynamicSignal.isShieldProtected,
       trend: product.trend as "up" | "down" | "stable",
@@ -81,14 +86,14 @@ export async function getProductById(id: string): Promise<Product | undefined> {
     where: { id },
     include: {
       platforms: true,
-      priceHistory: true,
+      snapshots: true,
     },
   })
 
   if (!product) return undefined
 
   const dynamicSignal = analyzePriceSignals(
-    product.priceHistory as any,
+    product.snapshots as any,
     product.currentBestPrice,
     product.name
   )
@@ -117,9 +122,14 @@ export async function getProductById(id: string): Promise<Product | undefined> {
     decision: {
       type: dynamicSignal.type,
       confidence: dynamicSignal.confidence,
+      score: dynamicSignal.score,
+      verdict: dynamicSignal.verdict,
       reasoning: dynamicSignal.reasoning,
       expectedMovement: dynamicSignal.expectedMovement,
       timeWindow: dynamicSignal.timeWindow,
+      isFakeSale: dynamicSignal.isFakeSale,
+      fairValue: dynamicSignal.fairValue,
+      overpriceAmount: dynamicSignal.overpriceAmount,
     },
     isShieldProtected: dynamicSignal.isShieldProtected,
     trend: product.trend as "up" | "down" | "stable",
@@ -143,13 +153,13 @@ export async function searchProducts(query: string): Promise<SearchResult[]> {
     },
     include: {
       platforms: true,
-      priceHistory: true,
+      snapshots: true,
     },
   })
 
   return products.map((p: any) => {
     const dynamicSignal = analyzePriceSignals(
-      p.priceHistory as any,
+      p.snapshots as any,
       p.currentBestPrice,
       p.name
     )
@@ -164,11 +174,16 @@ export async function searchProducts(query: string): Promise<SearchResult[]> {
       originalPrice: p.platforms[0]?.originalPrice || p.currentBestPrice,
       decision: dynamicSignal.type,
       confidence: dynamicSignal.confidence,
+      score: dynamicSignal.score,
+      verdict: dynamicSignal.verdict,
       trend: p.trend as "up" | "down" | "stable",
       reasoning: dynamicSignal.reasoning,
       expectedMovement: dynamicSignal.expectedMovement,
       timeWindow: dynamicSignal.timeWindow,
       isShieldProtected: dynamicSignal.isShieldProtected,
+      isFakeSale: dynamicSignal.isFakeSale,
+      fairValue: dynamicSignal.fairValue,
+      overpriceAmount: dynamicSignal.overpriceAmount,
       platforms: p.platforms.map((pl: any) => ({
         platformId: pl.platformId,
         name: pl.name,
@@ -177,6 +192,8 @@ export async function searchProducts(query: string): Promise<SearchResult[]> {
         bankOffers: pl.bankOffers ? JSON.parse(pl.bankOffers) : undefined,
       })),
       dealScore: computeDealScore(p.currentBestPrice, p.platforms[0]?.originalPrice || p.currentBestPrice, dynamicSignal.confidence),
+      verificationState: p.verificationState as any,
+      driftAlert: p.driftAlert,
     }
   })
 }
@@ -185,13 +202,13 @@ export async function getAllProducts(): Promise<SearchResult[]> {
   const products = await db.product.findMany({
     include: {
       platforms: true,
-      priceHistory: true,
+      snapshots: true,
     },
   })
 
   return products.map((p: any) => {
     const dynamicSignal = analyzePriceSignals(
-      p.priceHistory as any,
+      p.snapshots as any,
       p.currentBestPrice,
       p.name
     )
@@ -206,11 +223,16 @@ export async function getAllProducts(): Promise<SearchResult[]> {
       originalPrice: p.platforms[0]?.originalPrice || p.currentBestPrice,
       decision: dynamicSignal.type,
       confidence: dynamicSignal.confidence,
+      score: dynamicSignal.score,
+      verdict: dynamicSignal.verdict,
       trend: p.trend as "up" | "down" | "stable",
       reasoning: dynamicSignal.reasoning,
       expectedMovement: dynamicSignal.expectedMovement,
       timeWindow: dynamicSignal.timeWindow,
       isShieldProtected: dynamicSignal.isShieldProtected,
+      isFakeSale: dynamicSignal.isFakeSale,
+      fairValue: dynamicSignal.fairValue,
+      overpriceAmount: dynamicSignal.overpriceAmount,
       platforms: p.platforms.map((pl: any) => ({
         platformId: pl.platformId,
         name: pl.name,
@@ -219,6 +241,8 @@ export async function getAllProducts(): Promise<SearchResult[]> {
         bankOffers: pl.bankOffers ? JSON.parse(pl.bankOffers) : undefined,
       })),
       dealScore: computeDealScore(p.currentBestPrice, p.platforms[0]?.originalPrice || p.currentBestPrice, dynamicSignal.confidence),
+      verificationState: p.verificationState as any,
+      driftAlert: p.driftAlert,
     }
   })
 }

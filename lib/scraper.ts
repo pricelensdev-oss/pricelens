@@ -179,18 +179,27 @@ async function recordPrice(productId: string, result: ScrapeResult) {
   ])
 }
 
+import { ingestProductFromUrl } from "./ingestion/engine"
+
 /**
- * Search Discovery Layer
+ * Search Discovery Layer - Evolved to Oracle V4
  */
 export async function discoverProducts(query: string): Promise<string[]> {
   console.log(`🤖 [Scraper Agent] Deep-market search for: "${query}"...`)
   
   try {
-    // Discovery logic remains consistent but results are initialized with verified timestamps
-    let discoveredItems = []
+    const isUrl = query.startsWith('http')
     
+    if (isUrl) {
+      // Oracle V4: High-Fidelity Ingestion
+      const result = await ingestProductFromUrl(query);
+      return [result.productId];
+    }
+
+    // Standard Discovery for queries
     const isSamsungUltra = query.toLowerCase().includes("samsung") && query.toLowerCase().includes("ultra")
     const isIphone = query.toLowerCase().includes("iphone")
+    let discoveredItems = []
     
     if (isSamsungUltra) {
       discoveredItems = [
@@ -221,7 +230,7 @@ export async function discoverProducts(query: string): Promise<string[]> {
       ]
     }
 
-    const createdIds = []
+  const createdIds = []
 
     for (const item of discoveredItems) {
       const canonicalId = generateCanonicalId(item.name)

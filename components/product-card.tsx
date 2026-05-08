@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Heart, Bell, Zap, Shield } from "lucide-react"
+import { Heart, Bell, Zap, Shield, AlertTriangle } from "lucide-react"
 import { useAuth } from "@clerk/nextjs"
 import { DecisionBadge } from "./decision-badge"
 import { DealScore } from "./deal-score"
@@ -15,6 +15,7 @@ import type { SearchResult } from "@/lib/types"
 import { toast } from "sonner"
 import { usePreferences } from "@/hooks/use-preferences"
 import { calculatePersonalizedPrice } from "@/lib/ppe"
+import { cn } from "@/lib/utils"
 
 interface ProductCardProps {
   product: SearchResult
@@ -83,6 +84,12 @@ export function ProductCard({ product }: ProductCardProps) {
       toast.error("Failed to update watchlist")
     }
   }
+  const verificationColors = {
+    VERIFIED: "text-primary border-primary/40 bg-primary/20",
+    PARTIALLY_VERIFIED: "text-warning border-warning/40 bg-warning/20",
+    LOW_CONFIDENCE: "text-secondary-foreground border-white/10 bg-white/5",
+    FAILED: "text-danger border-danger/40 bg-danger/20"
+  }
 
   const discount = Math.round(
     ((product.originalPrice - product.currentBestPrice) / product.originalPrice) * 100
@@ -117,20 +124,51 @@ export function ProductCard({ product }: ProductCardProps) {
             />
             
             {/* Top Badges */}
-            <div className="absolute left-3 top-3 flex flex-col gap-2">
+            <div className="absolute left-3 top-3 flex flex-col gap-2 z-20">
               <div className={`transition-transform duration-500 group-hover:scale-110 ${product.decision === 'BUY' ? 'buy-verdict-pulse' : ''}`}>
-                <DecisionBadge decision={product.decision} size="sm" />
+                <div className={cn(
+                  "flex items-center gap-2 rounded-full px-3 py-1.5 backdrop-blur-2xl border font-black text-[9px] uppercase tracking-widest",
+                  product.decision === "BUY" && "bg-primary/20 border-primary/40 text-primary",
+                  product.decision === "WAIT" && "bg-warning/20 border-warning/40 text-warning",
+                  product.decision === "AVOID" && "bg-danger/20 border-danger/40 text-danger"
+                )}>
+                  {product.verdict || product.decision}
+                </div>
               </div>
-              {product.isShieldProtected && (
-                <div className="flex items-center gap-1.5 rounded-full bg-primary/20 px-2.5 py-1 backdrop-blur-xl border border-primary/30 shadow-glow-primary animate-stagger-1">
-                  <Shield className="h-3 w-3 text-primary fill-primary/20" />
-                  <span className="text-[8px] font-black uppercase tracking-widest text-primary">Shield Protected</span>
+              
+              {product.isFakeSale && (
+                <div className="flex items-center gap-1.5 rounded-full bg-danger/20 px-2.5 py-1 backdrop-blur-xl border border-danger/40 animate-pulse">
+                  <AlertTriangle className="h-3 w-3 text-danger fill-danger/20" />
+                  <span className="text-[8px] font-black uppercase tracking-widest text-danger">Fake Sale Detected</span>
                 </div>
               )}
+
+              {product.isShieldProtected && (
+                <div className="flex items-center gap-1.5 rounded-full bg-primary/20 px-2.5 py-1 backdrop-blur-xl border border-primary/30 shadow-glow-primary">
+                  <Shield className="h-3 w-3 text-primary fill-primary/20" />
+                  <span className="text-[8px] font-black uppercase tracking-widest text-primary">Best Price Guarantee</span>
+                </div>
+              )}
+
+              {product.driftAlert && (
+                <div className="flex items-center gap-1.5 rounded-full bg-danger/20 px-2.5 py-1 backdrop-blur-xl border border-danger/40 animate-pulse">
+                  <AlertTriangle className="h-3 w-3 text-danger fill-danger/20" />
+                  <span className="text-[8px] font-black uppercase tracking-widest text-danger">Listing Hijack Warning</span>
+                </div>
+              )}
+
+              <div className={cn(
+                "flex items-center gap-1.5 rounded-full px-2.5 py-1 backdrop-blur-xl border font-black text-[8px] uppercase tracking-widest",
+                verificationColors[product.verificationState || 'VERIFIED']
+              )}>
+                {product.verificationState === 'VERIFIED' && <Shield className="h-2.5 w-2.5 fill-current" />}
+                {product.verificationState === 'FAILED' && <AlertTriangle className="h-2.5 w-2.5 fill-current" />}
+                {product.verificationState || 'VERIFIED'}
+              </div>
             </div>
 
-            {discount > 0 && (
-              <div className="absolute right-3 top-3 rounded-full bg-primary/20 px-3 py-1 text-[10px] font-bold tracking-widest text-primary backdrop-blur-md border border-primary/20">
+            {discount > 0 && !product.isFakeSale && (
+              <div className="absolute right-3 top-3 rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold tracking-widest text-white backdrop-blur-md border border-white/10">
                 {discount}% OFF
               </div>
             )}
@@ -173,11 +211,11 @@ export function ProductCard({ product }: ProductCardProps) {
               
               <div className="grid grid-cols-2 gap-4 border-t border-white/10 pt-3">
                 <div>
-                  <p className="text-[8px] font-bold uppercase tracking-tighter text-secondary-foreground mb-1">Price Trend</p>
+                  <p className="text-[8px] font-bold uppercase tracking-tighter text-secondary-foreground mb-1">Price Chance</p>
                   <p className="text-[10px] font-bold text-primary glow-primary truncate">{product.expectedMovement}</p>
                 </div>
                 <div>
-                  <p className="text-[8px] font-bold uppercase tracking-tighter text-secondary-foreground mb-1">Target Window</p>
+                  <p className="text-[8px] font-bold uppercase tracking-tighter text-secondary-foreground mb-1">Time Table</p>
                   <p className="text-[10px] font-bold text-white truncate">{product.timeWindow}</p>
                 </div>
               </div>
@@ -200,38 +238,30 @@ export function ProductCard({ product }: ProductCardProps) {
             <div className="mt-4 flex items-end justify-between">
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl font-display font-bold tracking-tight text-foreground">
-                    {new Intl.NumberFormat("en-IN", {
-                      style: "currency",
-                      currency: "INR",
-                      maximumFractionDigits: 0,
-                    }).format(currentPersonalBest)}
+                  <span className="text-xl font-display font-bold tracking-tight text-white">
+                    ₹{currentPersonalBest.toLocaleString("en-IN")}
                   </span>
-                  {isPpeActive && (
-                    <div className="flex items-center gap-0.5 rounded-full bg-primary/20 px-1.5 py-0.5 border border-primary/20">
-                      <Zap className="h-2.5 w-2.5 text-primary fill-primary animate-pulse" />
-                      <span className="text-[8px] font-black text-primary uppercase tracking-tighter">BEST</span>
-                    </div>
+                  {product.isFakeSale && (
+                    <span className="text-[10px] font-bold text-danger uppercase tracking-tighter line-through decoration-danger/50 opacity-40">
+                      ₹{product.originalPrice.toLocaleString("en-IN")}
+                    </span>
                   )}
-                  <DealScore score={product.dealScore} />
                 </div>
-                {product.originalPrice > product.currentBestPrice && (
-                  <span className="text-[11px] font-medium text-muted-foreground/60 line-through">
-                    {new Intl.NumberFormat("en-IN", {
-                      style: "currency",
-                      currency: "INR",
-                      maximumFractionDigits: 0,
-                    }).format(product.originalPrice)}
-                  </span>
-                )}
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span className="text-[8px] font-bold uppercase tracking-widest text-white/20">Right Price:</span>
+                  <span className="text-[10px] font-bold text-white/40">₹{(product.fairValue || 0).toLocaleString("en-IN")}</span>
+                </div>
               </div>
               
               <div className="flex flex-col items-end">
-                 <span className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">
-                  Reliability
+                 <span className="text-[10px] font-bold uppercase tracking-tighter text-white/20">
+                  Deal Score
                 </span>
-                <span className="text-[11px] font-mono text-primary/80">
-                  {product.confidence}%
+                <span className={cn(
+                  "text-xl font-black font-display",
+                  product.score >= 80 ? "text-primary" : product.score >= 50 ? "text-warning" : "text-danger"
+                )}>
+                  {product.score}
                 </span>
               </div>
             </div>

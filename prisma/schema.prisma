@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -39,6 +40,19 @@ model Product {
   decisionMove     String?
   decisionWindow   String?
   
+  fingerprintHash  String?  @unique
+  verificationState String   @default("VERIFIED")
+  confidenceScore  Float?
+  driftAlert       Boolean  @default(false)
+  
+  parentProductId  String?
+  parentProduct    Product?  @relation("ProductVariants", fields: [parentProductId], references: [id], onDelete: SetNull)
+  variants         Product[]  @relation("ProductVariants")
+  
+  successorId      String?   @unique
+  successor        Product?   @relation("ProductGenerations", fields: [successorId], references: [id])
+  predecessor      Product?   @relation("ProductGenerations")
+  
   trend            String?
   lowestPrice      Int?
   highestPrice     Int?
@@ -51,7 +65,7 @@ model Product {
   updatedAt DateTime @updatedAt
 
   platforms         Platform[]
-  priceHistory      PriceHistory[]
+  snapshots         ProductSnapshot[]
   watchlistedBy     Watchlist[]
   protectedPurchases ProtectedPurchase[]
 }
@@ -59,6 +73,8 @@ model Product {
 model Platform {
   id             String  @id @default(cuid())
   platformId     String
+  externalId     String? // Marketplace PID (Product ID)
+  listingId      String? // Marketplace LID (Listing ID)
   name           String
   logo           String
   price          Int
@@ -66,6 +82,10 @@ model Platform {
   effectivePrice Int
   url            String
   inStock        Boolean @default(true)
+  sellerName     String?
+  sellerScore    Float?  @default(0)
+  sellerRating   Float?  @default(0)
+  variantInfo    String? // JSON string: { color, storage, etc }
   bankOffers     String?
   lastVerifiedAt DateTime @default(now())
 
@@ -75,11 +95,18 @@ model Platform {
   @@unique([productId, platformId])
 }
 
-model PriceHistory {
-  id        String   @id @default(cuid())
-  date      String
-  price     Int
-  platform  String
+model ProductSnapshot {
+  id             String   @id @default(cuid())
+  timestamp      DateTime @default(now())
+  date           String   // Keep for UI compatibility (YYYY-MM-DD)
+  price          Int
+  originalPrice  Int?
+  platform       String
+  sellerName     String?
+  stockStatus    String?
+  imageHash      String?
+  rating         Float?
+  reviewCount    Int?
 
   productId String
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
