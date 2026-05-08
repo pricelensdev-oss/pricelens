@@ -71,7 +71,7 @@ export default function HowItWorksPage() {
 
   const decisions = [
     {
-      type: "BUY NOW",
+      decision: "BUY NOW",
       color: "bg-success text-success-foreground",
       meaning: "Price is at or near the lowest point. Buy now before prices increase.",
       factors: [
@@ -82,7 +82,7 @@ export default function HowItWorksPage() {
       ],
     },
     {
-      type: "WAIT",
+      decision: "WAIT",
       color: "bg-warning text-warning-foreground",
       meaning: "Better deals are expected soon. Hold off on purchasing.",
       factors: [
@@ -93,7 +93,7 @@ export default function HowItWorksPage() {
       ],
     },
     {
-      type: "HOLD",
+      decision: "HOLD",
       color: "bg-muted text-muted-foreground",
       meaning: "Prices are stable. Buy if urgent, otherwise monitor.",
       factors: [
@@ -163,13 +163,13 @@ export default function HowItWorksPage() {
             <div className="grid gap-6 lg:grid-cols-3">
               {decisions.map((decision) => (
                 <div
-                  key={decision.type}
+                  key={decision.decision}
                   className="rounded-xl border border-border bg-card p-6"
                 >
                   <div
                     className={`mb-4 inline-flex rounded-lg px-4 py-2 text-sm font-bold ${decision.color}`}
                   >
-                    {decision.type}
+                    {decision.decision}
                   </div>
                   <p className="mb-4 font-medium text-foreground">{decision.meaning}</p>
                   <ul className="space-y-2">

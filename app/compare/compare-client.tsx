@@ -166,7 +166,7 @@ export function CompareClient({ products }: { products: Product[] }) {
             {products.map((product) => (
               <td key={product.id} className="p-6">
                 <div className="mb-2">
-                  <DecisionBadge decision={product.decision.type} />
+                  <DecisionBadge decision={product.decision.decision} />
                 </div>
                 <p className="text-[10px] leading-relaxed text-muted-foreground italic line-clamp-2">
                   "{product.decision?.reasoning}"

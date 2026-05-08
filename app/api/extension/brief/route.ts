@@ -42,15 +42,15 @@ export async function POST(req: NextRequest) {
     let brief = "Analysis Complete."
     if (decision.isFakeSale) {
       brief = "Avoid. This is an artificial price hike disguised as a sale."
-    } else if (decision.type === "BUY") {
+    } else if (decision.decision === "BUY") {
       brief = `Strong Buy. Current price is ${Math.round((1 - price/decision.fairValue) * 100)}% below fair market value.`
-    } else if (decision.type === "WAIT") {
+    } else if (decision.decision === "WAIT") {
       brief = `Wait. Our engine predicts a correction within ${decision.timeWindow}.`
     }
 
     return NextResponse.json({
       verdict: decision.verdict,
-      type: decision.type,
+      decision: decision.decision,
       score: decision.score,
       brief,
       isShieldProtected: decision.isShieldProtected

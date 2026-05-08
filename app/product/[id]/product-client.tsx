@@ -301,7 +301,7 @@ export function ProductClient({ product }: { product: Product }) {
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
               <div className="absolute left-6 top-6">
-                <DecisionBadge decision={product.decision.type} size="lg" />
+                <DecisionBadge decision={product.decision.decision} size="lg" />
               </div>
             </div>
 
@@ -520,7 +520,7 @@ export function ProductClient({ product }: { product: Product }) {
                           </DialogDescription>
                         </DialogHeader>
                          <div className="space-y-6 pt-6">
-                          {product.decision.type === "WAIT" && !hasAlert && (
+                          {product.decision.decision === "WAIT" && !hasAlert && (
                             <div className="rounded-2xl bg-primary/5 p-5 border border-primary/20 glass">
                               <p className="text-[10px] font-bold text-primary uppercase tracking-[0.2em] flex items-center gap-2 mb-3">
                                 <Zap className="h-3 w-3" /> Target Price
@@ -652,7 +652,7 @@ export function ProductClient({ product }: { product: Product }) {
                 <div className="flex items-center justify-between">
                   <CardTitle className="font-display text-xl tracking-tight text-foreground">AI Analysis</CardTitle>
                   <DecisionBadge
-                    decision={product.decision.type}
+                    decision={product.decision.decision}
                     confidence={product.decision.confidence}
                     showConfidence
                   />

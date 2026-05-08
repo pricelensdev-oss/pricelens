@@ -36,7 +36,7 @@ async function main() {
         description: product.description,
         specifications: JSON.stringify(product.specifications),
         
-        decisionType: product.decision.type,
+        decisionType: product.decision.decision,
         decisionConf: product.decision.confidence,
         decisionReason: product.decision.reasoning,
         decisionMove: product.decision.expectedMovement,
