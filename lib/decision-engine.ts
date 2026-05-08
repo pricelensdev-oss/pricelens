@@ -1,20 +1,5 @@
-import { PricePoint, DecisionType } from "./types";
+import { PricePoint, DecisionType, DecisionSignal } from "./types";
 
-export interface DecisionSignal {
-  type: DecisionType; // BUY, WAIT, AVOID
-  confidence: number;
-  score: number; // 0-100 unified score
-  verdict: string; // Decisive headline
-  reasoning: string;
-  expectedMovement: string;
-  timeWindow: string;
-  percentile: number;
-  volatility: number;
-  isShieldProtected: boolean;
-  isFakeSale: boolean;
-  fairValue: number;
-  overpriceAmount: number;
-}
 
 /**
  * PriceLens Decision Engine v2.0
@@ -68,7 +53,7 @@ export function analyzePriceSignals(
   const volatility = (Math.sqrt(variance) / avg) * 100;
 
   // 3. Conviction Engine
-  let type: DecisionType = "HOLD";
+  let decision: DecisionType = "HOLD";
   let verdict = "HOLD POSITION";
   let confidence = 70;
   let score = 50;
@@ -77,7 +62,7 @@ export function analyzePriceSignals(
   let timeWindow = "";
 
   if (isFakeSale) {
-    type = "AVOID";
+    decision = "AVOID";
     verdict = "AVOID: ARTIFICIAL HIKE";
     score = 15;
     confidence = 92;
@@ -85,7 +70,7 @@ export function analyzePriceSignals(
     expectedMovement = "Sharp Drop";
     timeWindow = "Immediate (Post-Sale)";
   } else if (percentile <= 10) {
-    type = "BUY";
+    decision = "BUY";
     verdict = "STRONG BUY";
     score = 90 + (10 - percentile);
     confidence = Math.min(98, 85 + (10 - percentile));
@@ -93,7 +78,7 @@ export function analyzePriceSignals(
     expectedMovement = "Stable / Rebound";
     timeWindow = "Buy Now";
   } else if (percentile >= 80) {
-    type = "WAIT";
+    decision = "WAIT";
     verdict = "WAIT FOR DROP";
     score = 30 - (percentile - 80);
     confidence = Math.min(95, 75 + (percentile - 80));
@@ -101,7 +86,7 @@ export function analyzePriceSignals(
     expectedMovement = `Potential drop of ₹${overpriceAmount.toFixed(0)}`;
     timeWindow = "10-15 days";
   } else {
-    type = "HOLD";
+    decision = "HOLD";
     verdict = "STABLE MARKET";
     score = 50 + (50 - percentile) / 2;
     confidence = 65;
@@ -116,10 +101,10 @@ export function analyzePriceSignals(
     reasoning += " Swings detected: High market volatility may impact short-term predictability.";
   }
 
-  const isShieldProtected = type === "BUY" && confidence >= 92;
+  const isShieldProtected = decision === "BUY" && confidence >= 92;
 
   return {
-    type,
+    decision,
     confidence: Math.round(confidence),
     score: Math.round(score),
     verdict,

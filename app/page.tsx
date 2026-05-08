@@ -17,7 +17,7 @@ export default async function HomePage() {
   // Using the pre-calculated intelligence from our Oracle Ingestion
   const featuredSignals = products.slice(0, 2).map(p => ({
     product: p,
-    signal: p as any // SearchResult has the same fields needed by VerdictCard
+    signal: p // SearchResult now extends DecisionSignal
   }))
 
   return (

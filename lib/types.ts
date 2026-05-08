@@ -1,7 +1,22 @@
 export type DecisionType = "BUY" | "WAIT" | "HOLD" | "AVOID"
-export type Decision = DecisionType
 export type TrendType = "up" | "down" | "stable"
-export type Trend = TrendType
+export type VerificationState = "VERIFIED" | "PARTIALLY_VERIFIED" | "LOW_CONFIDENCE" | "FAILED"
+
+export interface DecisionSignal {
+  decision: DecisionType
+  confidence: number
+  score: number 
+  verdict: string 
+  reasoning: string
+  expectedMovement: string
+  timeWindow: string
+  percentile: number
+  volatility: number
+  isShieldProtected: boolean
+  isFakeSale: boolean
+  fairValue: number
+  overpriceAmount: number
+}
 
 export interface Platform {
   id: string
@@ -39,21 +54,11 @@ export interface Product {
   specifications: Record<string, any>
   platforms: Platform[]
   priceHistory: PricePoint[]
-  snapshots?: any[] // New Oracle Snapshots
-  verificationState: "VERIFIED" | "PARTIALLY_VERIFIED" | "LOW_CONFIDENCE" | "FAILED"
+  snapshots?: any[] 
+  verificationState: VerificationState
   confidenceScore?: number
-  decision: {
-    type: DecisionType
-    confidence: number // 0-100
-    score: number // 0-100 unified score
-    verdict: string // "STRONG BUY", etc.
-    reasoning: string
-    expectedMovement: string
-    timeWindow: string
-    isFakeSale: boolean
-    fairValue: number
-    overpriceAmount: number
-  }
+  driftAlert?: boolean
+  decision: DecisionSignal
   isShieldProtected: boolean
   shieldReasoning?: string
   trend: TrendType
@@ -72,28 +77,38 @@ export interface SearchPlatform {
   bankOffers?: string[]
 }
 
-export interface SearchResult {
+export interface SearchResult extends DecisionSignal {
   id: string
   name: string
   brand: string
   category: string
   image: string
-  currentBestPrice: number // Default best price
+  currentBestPrice: number 
   originalPrice: number
-  decision: DecisionType
-  confidence: number
-  score: number
-  verdict: string
   trend: TrendType
   platforms: SearchPlatform[]
   dealScore: number
-  reasoning: string
-  expectedMovement: string
-  timeWindow: string
-  isShieldProtected: boolean
-  isFakeSale: boolean
-  fairValue: number
-  overpriceAmount: number
-  verificationState: "VERIFIED" | "PARTIALLY_VERIFIED" | "LOW_CONFIDENCE" | "FAILED"
+  verificationState: VerificationState
   driftAlert: boolean
+}
+
+export interface UserPreferences {
+  selectedBanks: string[]
+  memberships: string[]
+  isBusinessUser?: boolean
+  pincode?: string
+  exchangeValue?: number
+}
+
+export interface PriceBreakdown {
+  label: string
+  amount: number
+  type: "discount" | "fee" | "credit"
+}
+
+export interface PersonalizedPriceResult {
+  personalizedPrice: number
+  breakdown: PriceBreakdown[]
+  gstCredit: number
+  deliveryEstimate: string
 }

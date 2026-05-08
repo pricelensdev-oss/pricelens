@@ -1,25 +1,4 @@
-import { Platform } from "./types";
-
-interface UserPreferences {
-  selectedBanks: string[];
-  memberships: string[];
-  isBusinessUser?: boolean;
-  pincode?: string;
-  exchangeValue?: number;
-}
-
-interface PriceBreakdown {
-  label: string;
-  amount: number;
-  type: "discount" | "fee" | "credit";
-}
-
-interface PersonalizedPriceResult {
-  personalizedPrice: number;
-  breakdown: PriceBreakdown[];
-  gstCredit: number;
-  deliveryEstimate: string;
-}
+import { Platform, UserPreferences, PriceBreakdown, PersonalizedPriceResult } from "./types";
 
 /**
  * Smart Price Engine (PPE) logic.
