@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/sheet"
 import { calculatePersonalizedPrice } from "@/lib/ppe"
 import { usePreferences } from "@/hooks/use-preferences"
+import { cn } from "@/lib/utils"
 
 type SortOption = "relevance" | "price-asc" | "price-desc" | "discount" | "score"
 
