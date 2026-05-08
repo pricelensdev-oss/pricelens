@@ -1,9 +1,9 @@
-export type Decision = "BUY" | "WAIT" | "HOLD" | "AVOID"
+export type DecisionType = "BUY" | "WAIT" | "HOLD" | "AVOID"
 export type TrendType = "up" | "down" | "stable"
 export type VerificationState = "VERIFIED" | "PARTIALLY_VERIFIED" | "LOW_CONFIDENCE" | "FAILED"
 
 export interface DecisionSignal {
-  decision: Decision
+  decision: DecisionType
   confidence: number
   score: number 
   verdict: string 

@@ -65,7 +65,7 @@ model Product {
   updatedAt DateTime @updatedAt
 
   platforms         Platform[]
-  snapshots         ProductSnapshot[]
+  snapshots         OracleSnapshot[]
   watchlistedBy     Watchlist[]
   protectedPurchases ProtectedPurchase[]
 }
@@ -95,7 +95,7 @@ model Platform {
   @@unique([productId, platformId])
 }
 
-model ProductSnapshot {
+model OracleSnapshot {
   id             String   @id @default(cuid())
   timestamp      DateTime @default(now())
   date           String   // Keep for UI compatibility (YYYY-MM-DD)

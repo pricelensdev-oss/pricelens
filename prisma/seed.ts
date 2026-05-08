@@ -9,7 +9,7 @@ async function main() {
   await db.protectedPurchase.deleteMany()
   await db.watchlist.deleteMany()
   await db.platform.deleteMany()
-  await db.productSnapshot.deleteMany()
+  await db.oracleSnapshot.deleteMany()
   await db.product.deleteMany()
   await db.user.deleteMany()
 
