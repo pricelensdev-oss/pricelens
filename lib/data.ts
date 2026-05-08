@@ -28,6 +28,15 @@ export async function getProductsByIds(ids: string[]): Promise<Product[]> {
       product.name
     )
 
+    let parsedSpecs = {};
+    try {
+      parsedSpecs = typeof product.specifications === "string" 
+        ? JSON.parse(product.specifications || "{}") 
+        : (product.specifications || {});
+    } catch (e) {
+      console.error("[ERROR]: Failed to parse specifications for product", product.id, e);
+    }
+
     return {
       id: product.id,
       name: product.name,
@@ -35,7 +44,7 @@ export async function getProductsByIds(ids: string[]): Promise<Product[]> {
       category: product.category,
       image: product.image,
       description: product.description,
-      specifications: JSON.parse(product.specifications || "{}"),
+      specifications: parsedSpecs,
       platforms: product.platforms.map((p: any) => ({
         id: p.id,
         platformId: p.platformId,
