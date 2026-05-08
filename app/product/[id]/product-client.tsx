@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
@@ -257,8 +257,8 @@ export function ProductClient({ product }: { product: Product }) {
     }
   }
 
-  const sortedPlatforms = [...product.platforms]
-    .map(p => {
+  const sortedPlatforms = useMemo(() => {
+    return [...product.platforms].map(p => {
       const result = calculatePersonalPrice(p)
       return { 
         ...p, 
@@ -266,8 +266,8 @@ export function ProductClient({ product }: { product: Product }) {
         breakdown: result.breakdown,
         delivery: result.deliveryEstimate
       }
-    })
-    .sort((a, b) => a.personalPrice - b.personalPrice)
+    }).sort((a, b) => a.personalPrice - b.personalPrice)
+  }, [product.platforms, preferences])
 
   const personalBestPrice = sortedPlatforms[0].personalPrice
 
@@ -386,7 +386,7 @@ export function ProductClient({ product }: { product: Product }) {
                            </div>
                            
                            {/* Bank Offer Breakdown */}
-                           {sortedPlatforms[0].bankOffers && selectedBanks.some(bank => sortedPlatforms[0].bankOffers?.some(offer => offer.toUpperCase().includes(bank.toUpperCase()))) && (
+                           {sortedPlatforms[0].bankOffers && selectedBanks.some(bank => sortedPlatforms[0].bankOffers?.some((offer: string) => offer.toUpperCase().includes(bank.toUpperCase()))) && (
                              <div className="flex justify-between text-success">
                                <span>Bank Preferred Discount</span>
                                <span className="font-mono font-bold">-{formatPrice(sortedPlatforms[0].price - calculatePersonalizedPrice(sortedPlatforms[0] as any, { ...preferences, memberships: [], isBusinessUser: false }).personalizedPrice)}</span>
@@ -750,7 +750,7 @@ export function ProductClient({ product }: { product: Product }) {
             </CardHeader>
             <CardContent>
               <PriceChart 
-                data={product.snapshots} 
+                data={product.priceHistory} 
                 className="h-[300px] w-full" 
                 targetPrice={hasAlert ? Number(alertPrice) : undefined} 
                 onPointClick={(price) => {
@@ -772,7 +772,7 @@ export function ProductClient({ product }: { product: Product }) {
             </CardHeader>
             <CardContent className="p-0">
               <div className="p-2 space-y-1">
-                {sortedPlatforms.map((platform, index) => (
+                {sortedPlatforms.map((platform: any, index: number) => (
                   <PlatformCard
                     key={platform.id}
                     platform={{ ...platform, effectivePrice: platform.personalPrice }}

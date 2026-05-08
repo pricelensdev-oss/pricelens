@@ -3,6 +3,9 @@ export type Decision = DecisionType
 export type TrendType = "up" | "down" | "stable"
 export type Trend = TrendType
 
+export interface Platform {
+  id: string
+  platformId: string
   externalId?: string
   listingId?: string
   name: string
