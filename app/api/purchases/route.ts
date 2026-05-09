@@ -3,65 +3,75 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 
 export async function GET() {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const { userId } = await auth();
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const purchases = await db.protectedPurchase.findMany({
-    where: { user: { clerkId: userId } },
-    include: { product: true }
-  });
+    const purchases = await db.protectedPurchase.findMany({
+      where: { user: { clerkId: userId } },
+      include: { product: true }
+    });
 
-  return NextResponse.json(purchases.map((p: any) => ({
-    ...p,
-    ...p.product,
-    id: p.productId // For client compatibility
-  })));
+    return NextResponse.json(purchases.map((p: any) => ({
+      ...p,
+      ...p.product,
+      id: p.productId // For client compatibility
+    })));
+  } catch (error) {
+    console.error("[API_PURCHASES_GET_ERROR]:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
 }
 
 export async function POST(request: Request) {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const { userId } = await auth();
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const body = await request.json();
-  const { action, item, id, refundAmount } = body;
+    const body = await request.json();
+    const { action, item, id, refundAmount } = body;
 
-  const user = await db.user.findUnique({ where: { clerkId: userId } });
-  if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    const user = await db.user.findUnique({ where: { clerkId: userId } });
+    if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-  if (action === "add") {
-    await db.protectedPurchase.upsert({
-      where: { id: id || "new-purchase" }, // Simplified for mock transition
-      create: {
-        userId: user.id,
-        productId: item.id,
-        purchasePrice: item.purchasePrice,
-        platformId: item.platform,
-        shieldStatus: "active"
-      },
-      update: {
-        purchasePrice: item.purchasePrice,
-        shieldStatus: "active"
-      }
-    });
-  } else if (action === "remove") {
-    await db.protectedPurchase.deleteMany({
-      where: { userId: user.id, productId: id }
-    });
-  } else if (action === "claim") {
-    // 1. Update purchase status
-    await db.protectedPurchase.updateMany({
-      where: { userId: user.id, productId: id },
-      data: { shieldStatus: "claimed", savingsRecovered: refundAmount || 0 }
-    });
-
-    // 2. Add to wallet balance
-    if (refundAmount && refundAmount > 0) {
-      await db.user.update({
-        where: { id: user.id },
-        data: { walletBalance: { increment: refundAmount } }
+    if (action === "add") {
+      await db.protectedPurchase.upsert({
+        where: { id: id || "new-purchase" }, // Simplified for mock transition
+        create: {
+          userId: user.id,
+          productId: item.id,
+          purchasePrice: item.purchasePrice,
+          platformId: item.platform,
+          shieldStatus: "active"
+        },
+        update: {
+          purchasePrice: item.purchasePrice,
+          shieldStatus: "active"
+        }
       });
-    }
-  }
+    } else if (action === "remove") {
+      await db.protectedPurchase.deleteMany({
+        where: { userId: user.id, productId: id }
+      });
+    } else if (action === "claim") {
+      // 1. Update purchase status
+      await db.protectedPurchase.updateMany({
+        where: { userId: user.id, productId: id },
+        data: { shieldStatus: "claimed", savingsRecovered: refundAmount || 0 }
+      });
 
-  return NextResponse.json({ success: true });
+      // 2. Add to wallet balance
+      if (refundAmount && refundAmount > 0) {
+        await db.user.update({
+          where: { id: user.id },
+          data: { walletBalance: { increment: refundAmount } }
+        });
+      }
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("[API_PURCHASES_POST_ERROR]:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { refreshProductIfStale } from "@/lib/scraper"
+import { ingestProductFromUrl } from "@/lib/ingestion/engine"
 
 export async function POST(req: Request) {
   try {
@@ -21,28 +22,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ productId: existingPlatform.productId })
     }
 
-    // 3. New Product Discovery (Agentic Ingestion)
-    // In a real app, we would scrape the URL here to get the product name
-    // For simulation, we'll pick a random product from our "Discovery Pool" if not found
-    const discoveryPool = [
-      { id: "cm0-123", name: "iPhone 15 Pro" },
-      { id: "cm0-456", name: "Sony WH-1000XM5" },
-      { id: "cm0-789", name: "MacBook Pro M3" }
-    ]
+    // 3. High-Fidelity Ingestion (Oracle V4)
+    const result = await ingestProductFromUrl(url);
     
-    // Randomly pick one or return the first one
-    const placeholder = discoveryPool[Math.floor(Math.random() * discoveryPool.length)]
-    
-    // Ensure it exists in DB (simulate creation if needed)
-    const product = await db.product.findFirst({
-      where: { name: { contains: placeholder.name } }
-    })
-
-    if (product) {
-      return NextResponse.json({ productId: product.id })
+    if (result && result.productId) {
+      return NextResponse.json({ productId: result.productId });
     }
 
-    return NextResponse.json({ error: "Intelligence engine could not map this URL. Try a popular electronic item." }, { status: 404 })
+    return NextResponse.json({ error: "Intelligence engine could not map this URL. Please verify the URL or try a popular marketplace." }, { status: 404 });
 
   } catch (error) {
     console.error("[Ingest API Error]", error)
