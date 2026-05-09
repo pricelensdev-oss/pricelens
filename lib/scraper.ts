@@ -168,13 +168,14 @@ async function recordPrice(productId: string, result: ScrapeResult) {
         lastVerifiedAt: new Date()
       }
     }),
-    db.productSnapshot.create({
+    db.oracleSnapshot.create({
       data: {
         productId,
         price: result.price,
         platform: result.platformId,
         sellerName: result.platformId, // Fallback for simple scraper
-        inStock: result.inStock,
+        stockStatus: result.inStock ? "IN_STOCK" : "OUT_OF_STOCK",
+        date: new Date().toISOString().split("T")[0],
         timestamp: new Date()
       }
     })
