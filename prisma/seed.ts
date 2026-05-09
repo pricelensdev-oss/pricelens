@@ -69,7 +69,8 @@ async function main() {
             price: ph.price,
             platform: ph.platform,
             sellerName: ph.platform,
-            inStock: true
+            stockStatus: "IN_STOCK",
+            date: ph.date
           }))
         }
       }
