@@ -25,9 +25,18 @@ export default async function SearchPage({
     }
   }
 
-  const products = q ? await searchProducts(q) : await getAllProducts()
-  const brands = await getBrands()
-  const categoryStats = await getCategoryStats()
+  let products = []
+  let brands = []
+  let categoryStats = []
+
+  try {
+    products = q ? await searchProducts(q) : await getAllProducts()
+    brands = await getBrands()
+    categoryStats = await getCategoryStats()
+  } catch (error) {
+    console.error("[CRITICAL]: Search page data fetching failed", error)
+    // Keep them as empty arrays to avoid crashing the client component
+  }
 
   return (
     <Suspense fallback={null}>
