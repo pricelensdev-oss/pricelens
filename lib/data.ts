@@ -1,6 +1,6 @@
 import { db } from "./db"
 import { analyzePriceSignals } from "./decision-engine"
-import type { Product, SearchResult, DecisionType } from "./types"
+import type { Product, SearchResult, DecisionType, VerificationState } from "./types"
 
 /**
  * Computes a deterministic deal score 0-100 from product data.
