@@ -1,3 +1,4 @@
+import { VerificationState } from '../types';
 import { parseMarketplaceUrl } from '../urls';
 import { generateProductFingerprint } from './fingerprint';
 import { normalizeProduct, CanonicalProduct } from '../normalization';
@@ -112,7 +113,7 @@ export async function ingestProductFromUrl(url: string): Promise<IngestionResult
   });
 
   // 7. Create Historical Snapshot
-  await db.productSnapshot.create({
+  await db.oracleSnapshot.create({
     data: {
       productId: product.id,
       price: canonical.price,
@@ -157,7 +158,7 @@ function calculateConfidence(product: CanonicalProduct, identity: any): number {
   return score;
 }
 
-function deriveVerificationState(confidence: number): any {
+function deriveVerificationState(confidence: number): VerificationState {
   if (confidence >= 90) return 'VERIFIED';
   if (confidence >= 70) return 'PARTIALLY_VERIFIED';
   return 'LOW_CONFIDENCE';

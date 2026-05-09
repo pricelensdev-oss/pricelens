@@ -8,6 +8,7 @@ import { z } from 'zod';
 export const CanonicalProductSchema = z.object({
   title: z.string().min(1),
   brand: z.string(),
+  description: z.string().optional(),
   category: z.string().optional(),
   price: z.number().nonnegative(),
   originalPrice: z.number().nonnegative().optional(),
