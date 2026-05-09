@@ -17,9 +17,24 @@ export const products: Product[] = [
       { date: "2024-04-01", price: 159900, platform: "Amazon" },
       { date: "2024-05-01", price: 154900, platform: "Amazon" }
     ],
-    decision: { type: "WAIT", confidence: 85, reasoning: "Price drop expected next month based on historical data.", expectedMovement: "Drop by ₹5,000", timeWindow: "30 days" },
+    decision: { 
+      decision: "WAIT", 
+      confidence: 85, 
+      score: 45,
+      verdict: "WAIT FOR DROP",
+      reasoning: "Price drop expected next month based on historical data.", 
+      expectedMovement: "Drop by ₹5,000", 
+      timeWindow: "30 days",
+      percentile: 82,
+      volatility: 5,
+      isShieldProtected: false,
+      isFakeSale: false,
+      fairValue: 152000,
+      overpriceAmount: 2900
+    },
     trend: "down",
-    lowestPrice: 154900, highestPrice: 159900, averagePrice: 157400, currentBestPrice: 154900, currentBestPlatform: "Amazon", isShieldProtected: false
+    lowestPrice: 154900, highestPrice: 159900, averagePrice: 157400, currentBestPrice: 154900, currentBestPlatform: "Amazon", isShieldProtected: false,
+    verificationState: "VERIFIED"
   },
   {
     id: "2",
@@ -36,9 +51,24 @@ export const products: Product[] = [
       { date: "2024-03-01", price: 29990, platform: "Flipkart" },
       { date: "2024-05-01", price: 26990, platform: "Flipkart" }
     ],
-    decision: { type: "BUY", confidence: 95, reasoning: "Lowest price of the year.", expectedMovement: "Rise by ₹3,000", timeWindow: "7 days" },
+    decision: { 
+      decision: "BUY", 
+      confidence: 95, 
+      score: 94,
+      verdict: "STRONG BUY",
+      reasoning: "Lowest price of the year.", 
+      expectedMovement: "Rise by ₹3,000", 
+      timeWindow: "7 days",
+      percentile: 5,
+      volatility: 8,
+      isShieldProtected: true,
+      isFakeSale: false,
+      fairValue: 27500,
+      overpriceAmount: 0
+    },
     trend: "up",
-    lowestPrice: 24990, highestPrice: 34990, averagePrice: 29990, currentBestPrice: 24990, currentBestPlatform: "Flipkart", isShieldProtected: false
+    lowestPrice: 24990, highestPrice: 34990, averagePrice: 29990, currentBestPrice: 24990, currentBestPlatform: "Flipkart", isShieldProtected: true,
+    verificationState: "VERIFIED"
   },
   {
     id: "3",
@@ -52,9 +82,24 @@ export const products: Product[] = [
       { id: "p3a", platformId: "croma", name: "Croma", logo: "/platforms/croma.svg", price: 114900, originalPrice: 114900, effectivePrice: 104900, url: "https://croma.com", inStock: true, bankOffers: ["10000 instant discount on SBI"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 114900, platform: "Croma" }],
-    decision: { type: "HOLD", confidence: 60, reasoning: "Price is stable, no immediate drops expected.", expectedMovement: "Stable", timeWindow: "60 days" },
+    decision: { 
+      decision: "HOLD", 
+      confidence: 60, 
+      score: 55,
+      verdict: "STABLE MARKET",
+      reasoning: "Price is stable, no immediate drops expected.", 
+      expectedMovement: "Stable", 
+      timeWindow: "60 days",
+      percentile: 45,
+      volatility: 3,
+      isShieldProtected: false,
+      isFakeSale: false,
+      fairValue: 112000,
+      overpriceAmount: 2900
+    },
     trend: "stable",
-    lowestPrice: 104900, highestPrice: 114900, averagePrice: 109900, currentBestPrice: 104900, currentBestPlatform: "Croma", isShieldProtected: false
+    lowestPrice: 104900, highestPrice: 114900, averagePrice: 109900, currentBestPrice: 104900, currentBestPlatform: "Croma", isShieldProtected: false,
+    verificationState: "VERIFIED"
   },
   {
     id: "4",
@@ -68,9 +113,24 @@ export const products: Product[] = [
       { id: "p4a", platformId: "amazon", name: "Amazon", logo: "/platforms/amazon.svg", price: 129999, originalPrice: 139999, effectivePrice: 119999, url: "https://amazon.in", inStock: true, bankOffers: ["10000 off on HDFC"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 129999, platform: "Amazon" }],
-    decision: { type: "BUY", confidence: 90, reasoning: "Solid discount on a relatively new flagship.", expectedMovement: "Stable", timeWindow: "15 days" },
+    decision: { 
+      decision: "BUY", 
+      confidence: 90, 
+      score: 88,
+      verdict: "STRONG BUY",
+      reasoning: "Solid discount on a relatively new flagship.", 
+      expectedMovement: "Stable", 
+      timeWindow: "15 days",
+      percentile: 15,
+      volatility: 6,
+      isShieldProtected: false,
+      isFakeSale: false,
+      fairValue: 125000,
+      overpriceAmount: 0
+    },
     trend: "down",
-    lowestPrice: 119999, highestPrice: 139999, averagePrice: 129999, currentBestPrice: 119999, currentBestPlatform: "Amazon", isShieldProtected: false
+    lowestPrice: 119999, highestPrice: 139999, averagePrice: 129999, currentBestPrice: 119999, currentBestPlatform: "Amazon", isShieldProtected: false,
+    verificationState: "VERIFIED"
   },
   {
     id: "5",
@@ -84,9 +144,24 @@ export const products: Product[] = [
       { id: "p5a", platformId: "reliance", name: "Reliance Digital", logo: "/platforms/reliance.svg", price: 219900, originalPrice: 349900, effectivePrice: 209900, url: "https://reliancedigital.in", inStock: true, bankOffers: ["10000 off on Kotak"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 219900, platform: "Reliance Digital" }],
-    decision: { type: "BUY", confidence: 92, reasoning: "Deepest discount since launch.", expectedMovement: "Stable", timeWindow: "30 days" },
+    decision: { 
+      decision: "BUY", 
+      confidence: 92, 
+      score: 91,
+      verdict: "STRONG BUY",
+      reasoning: "Deepest discount since launch.", 
+      expectedMovement: "Stable", 
+      timeWindow: "30 days",
+      percentile: 8,
+      volatility: 12,
+      isShieldProtected: true,
+      isFakeSale: false,
+      fairValue: 215000,
+      overpriceAmount: 0
+    },
     trend: "down",
-    lowestPrice: 209900, highestPrice: 349900, averagePrice: 229900, currentBestPrice: 209900, currentBestPlatform: "Reliance Digital", isShieldProtected: false
+    lowestPrice: 209900, highestPrice: 349900, averagePrice: 229900, currentBestPrice: 209900, currentBestPlatform: "Reliance Digital", isShieldProtected: true,
+    verificationState: "VERIFIED"
   },
   {
     id: "6",
@@ -100,9 +175,24 @@ export const products: Product[] = [
       { id: "p6a", platformId: "amazon", name: "Amazon", logo: "/platforms/amazon.svg", price: 54990, originalPrice: 54990, effectivePrice: 49990, url: "https://amazon.in", inStock: true, bankOffers: ["5000 off on select cards"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 54990, platform: "Amazon" }],
-    decision: { type: "WAIT", confidence: 75, reasoning: "Upcoming Summer Sale expected to bring prices down.", expectedMovement: "Drop by ₹5,000", timeWindow: "14 days" },
+    decision: { 
+      decision: "WAIT", 
+      confidence: 75, 
+      score: 42,
+      verdict: "WAIT FOR DROP",
+      reasoning: "Upcoming Summer Sale expected to bring prices down.", 
+      expectedMovement: "Drop by ₹5,000", 
+      timeWindow: "14 days",
+      percentile: 75,
+      volatility: 4,
+      isShieldProtected: false,
+      isFakeSale: false,
+      fairValue: 51000,
+      overpriceAmount: 3990
+    },
     trend: "stable",
-    lowestPrice: 49990, highestPrice: 54990, averagePrice: 52490, currentBestPrice: 49990, currentBestPlatform: "Amazon", isShieldProtected: false
+    lowestPrice: 49990, highestPrice: 54990, averagePrice: 52490, currentBestPrice: 49990, currentBestPlatform: "Amazon", isShieldProtected: false,
+    verificationState: "VERIFIED"
   },
   {
     id: "7",
@@ -116,9 +206,24 @@ export const products: Product[] = [
       { id: "p7a", platformId: "amazon", name: "Amazon", logo: "/platforms/amazon.svg", price: 139990, originalPrice: 199990, effectivePrice: 129990, url: "https://amazon.in", inStock: true, bankOffers: ["10000 off on SBI"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 139990, platform: "Amazon" }],
-    decision: { type: "BUY", confidence: 88, reasoning: "Clearance pricing before C4 arrives.", expectedMovement: "Stable", timeWindow: "21 days" },
+    decision: { 
+      decision: "BUY", 
+      confidence: 88, 
+      score: 85,
+      verdict: "STRONG BUY",
+      reasoning: "Clearance pricing before C4 arrives.", 
+      expectedMovement: "Stable", 
+      timeWindow: "21 days",
+      percentile: 12,
+      volatility: 9,
+      isShieldProtected: false,
+      isFakeSale: false,
+      fairValue: 135000,
+      overpriceAmount: 0
+    },
     trend: "down",
-    lowestPrice: 129990, highestPrice: 199990, averagePrice: 149990, currentBestPrice: 129990, currentBestPlatform: "Amazon", isShieldProtected: false
+    lowestPrice: 129990, highestPrice: 199990, averagePrice: 149990, currentBestPrice: 129990, currentBestPlatform: "Amazon", isShieldProtected: false,
+    verificationState: "VERIFIED"
   },
   {
     id: "8",
@@ -132,9 +237,24 @@ export const products: Product[] = [
       { id: "p8a", platformId: "flipkart", name: "Flipkart", logo: "/platforms/flipkart.svg", price: 74990, originalPrice: 89990, effectivePrice: 69990, url: "https://flipkart.com", inStock: true, bankOffers: ["5000 off on Axis"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 74990, platform: "Flipkart" }],
-    decision: { type: "BUY", confidence: 94, reasoning: "Lowest price for an RTX 4050 laptop.", expectedMovement: "Rise", timeWindow: "5 days" },
+    decision: { 
+      decision: "BUY", 
+      confidence: 94, 
+      score: 93,
+      verdict: "STRONG BUY",
+      reasoning: "Lowest price for an RTX 4050 laptop.", 
+      expectedMovement: "Rise", 
+      timeWindow: "5 days",
+      percentile: 3,
+      volatility: 11,
+      isShieldProtected: true,
+      isFakeSale: false,
+      fairValue: 78000,
+      overpriceAmount: 0
+    },
     trend: "up",
-    lowestPrice: 69990, highestPrice: 89990, averagePrice: 79990, currentBestPrice: 69990, currentBestPlatform: "Flipkart", isShieldProtected: false
+    lowestPrice: 69990, highestPrice: 89990, averagePrice: 79990, currentBestPrice: 69990, currentBestPlatform: "Flipkart", isShieldProtected: true,
+    verificationState: "VERIFIED"
   },
   {
     id: "9",
@@ -148,9 +268,24 @@ export const products: Product[] = [
       { id: "p9a", platformId: "amazon", name: "Amazon", logo: "/platforms/amazon.svg", price: 19900, originalPrice: 24900, effectivePrice: 18900, url: "https://amazon.in", inStock: true, bankOffers: ["1000 off on HDFC"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 19900, platform: "Amazon" }],
-    decision: { type: "BUY", confidence: 91, reasoning: "Consistently hovering at its lowest point.", expectedMovement: "Stable", timeWindow: "15 days" },
+    decision: { 
+      decision: "BUY", 
+      confidence: 91, 
+      score: 89,
+      verdict: "STRONG BUY",
+      reasoning: "Consistently hovering at its lowest point.", 
+      expectedMovement: "Stable", 
+      timeWindow: "15 days",
+      percentile: 10,
+      volatility: 4,
+      isShieldProtected: false,
+      isFakeSale: false,
+      fairValue: 19500,
+      overpriceAmount: 0
+    },
     trend: "stable",
-    lowestPrice: 18900, highestPrice: 24900, averagePrice: 20900, currentBestPrice: 18900, currentBestPlatform: "Amazon", isShieldProtected: false
+    lowestPrice: 18900, highestPrice: 24900, averagePrice: 20900, currentBestPrice: 18900, currentBestPlatform: "Amazon", isShieldProtected: false,
+    verificationState: "VERIFIED"
   },
   {
     id: "10",
@@ -164,9 +299,24 @@ export const products: Product[] = [
       { id: "p10a", platformId: "amazon", name: "Amazon", logo: "/platforms/amazon.svg", price: 204990, originalPrice: 214990, effectivePrice: 194990, url: "https://amazon.in", inStock: true, bankOffers: ["10000 off on HDFC"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 204990, platform: "Amazon" }],
-    decision: { type: "HOLD", confidence: 55, reasoning: "Price is standard. No big sales expected soon.", expectedMovement: "Stable", timeWindow: "90 days" },
+    decision: { 
+      decision: "HOLD", 
+      confidence: 55, 
+      score: 52,
+      verdict: "STABLE MARKET",
+      reasoning: "Price is standard. No big sales expected soon.", 
+      expectedMovement: "Stable", 
+      timeWindow: "90 days",
+      percentile: 50,
+      volatility: 2,
+      isShieldProtected: false,
+      isFakeSale: false,
+      fairValue: 200000,
+      overpriceAmount: 4990
+    },
     trend: "stable",
-    lowestPrice: 194990, highestPrice: 214990, averagePrice: 204990, currentBestPrice: 194990, currentBestPlatform: "Amazon", isShieldProtected: false
+    lowestPrice: 194990, highestPrice: 214990, averagePrice: 204990, currentBestPrice: 194990, currentBestPlatform: "Amazon", isShieldProtected: false,
+    verificationState: "VERIFIED"
   },
   {
     id: "11",
@@ -180,9 +330,24 @@ export const products: Product[] = [
       { id: "p11a", platformId: "flipkart", name: "Flipkart", logo: "/platforms/flipkart.svg", price: 51990, originalPrice: 54990, effectivePrice: 47990, url: "https://flipkart.com", inStock: true, bankOffers: ["4000 off on HDFC"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 51990, platform: "Flipkart" }],
-    decision: { type: "BUY", confidence: 82, reasoning: "Better value than PS5 right now.", expectedMovement: "Stable", timeWindow: "14 days" },
+    decision: { 
+      decision: "BUY", 
+      confidence: 82, 
+      score: 78,
+      verdict: "BUY NOW",
+      reasoning: "Better value than PS5 right now.", 
+      expectedMovement: "Stable", 
+      timeWindow: "14 days",
+      percentile: 25,
+      volatility: 7,
+      isShieldProtected: false,
+      isFakeSale: false,
+      fairValue: 50000,
+      overpriceAmount: 1990
+    },
     trend: "down",
-    lowestPrice: 47990, highestPrice: 54990, averagePrice: 51990, currentBestPrice: 47990, currentBestPlatform: "Flipkart", isShieldProtected: false
+    lowestPrice: 47990, highestPrice: 54990, averagePrice: 51990, currentBestPrice: 47990, currentBestPlatform: "Flipkart", isShieldProtected: false,
+    verificationState: "VERIFIED"
   },
   {
     id: "12",
@@ -196,9 +361,24 @@ export const products: Product[] = [
       { id: "p12a", platformId: "flipkart", name: "Flipkart", logo: "/platforms/flipkart.svg", price: 106999, originalPrice: 113999, effectivePrice: 96999, url: "https://flipkart.com", inStock: true, bankOffers: ["10000 off on ICICI"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 106999, platform: "Flipkart" }],
-    decision: { type: "WAIT", confidence: 80, reasoning: "Pixel 8a launch usually triggers a drop for Pro.", expectedMovement: "Drop", timeWindow: "30 days" },
+    decision: { 
+      decision: "WAIT", 
+      confidence: 80, 
+      score: 38,
+      verdict: "WAIT FOR DROP",
+      reasoning: "Pixel 8a launch usually triggers a drop for Pro.", 
+      expectedMovement: "Drop", 
+      timeWindow: "30 days",
+      percentile: 70,
+      volatility: 9,
+      isShieldProtected: false,
+      isFakeSale: false,
+      fairValue: 102000,
+      overpriceAmount: 4999
+    },
     trend: "down",
-    lowestPrice: 96999, highestPrice: 113999, averagePrice: 106999, currentBestPrice: 96999, currentBestPlatform: "Flipkart", isShieldProtected: false
+    lowestPrice: 96999, highestPrice: 113999, averagePrice: 106999, currentBestPrice: 96999, currentBestPlatform: "Flipkart", isShieldProtected: false,
+    verificationState: "VERIFIED"
   },
   {
     id: "13",
@@ -212,9 +392,24 @@ export const products: Product[] = [
       { id: "p13a", platformId: "amazon", name: "Amazon", logo: "/platforms/amazon.svg", price: 24999, originalPrice: 29999, effectivePrice: 21999, url: "https://amazon.in", inStock: true, bankOffers: ["3000 off on HDFC"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 24999, platform: "Amazon" }],
-    decision: { type: "BUY", confidence: 87, reasoning: "Great value for a premium smartwatch.", expectedMovement: "Stable", timeWindow: "15 days" },
+    decision: { 
+      decision: "BUY", 
+      confidence: 87, 
+      score: 84,
+      verdict: "BUY NOW",
+      reasoning: "Great value for a premium smartwatch.", 
+      expectedMovement: "Stable", 
+      timeWindow: "15 days",
+      percentile: 20,
+      volatility: 5,
+      isShieldProtected: false,
+      isFakeSale: false,
+      fairValue: 24000,
+      overpriceAmount: 999
+    },
     trend: "stable",
-    lowestPrice: 21999, highestPrice: 29999, averagePrice: 25999, currentBestPrice: 21999, currentBestPlatform: "Amazon", isShieldProtected: false
+    lowestPrice: 21999, highestPrice: 29999, averagePrice: 25999, currentBestPrice: 21999, currentBestPlatform: "Amazon", isShieldProtected: false,
+    verificationState: "VERIFIED"
   },
   {
     id: "14",
@@ -228,9 +423,24 @@ export const products: Product[] = [
       { id: "p14a", platformId: "amazon", name: "Amazon", logo: "/platforms/amazon.svg", price: 33900, originalPrice: 35900, effectivePrice: 31900, url: "https://amazon.in", inStock: true, bankOffers: ["2000 off on SBI"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 33900, platform: "Amazon" }],
-    decision: { type: "HOLD", confidence: 65, reasoning: "Recent launch, prices aren't moving much yet.", expectedMovement: "Stable", timeWindow: "45 days" },
+    decision: { 
+      decision: "HOLD", 
+      confidence: 65, 
+      score: 62,
+      verdict: "STABLE MARKET",
+      reasoning: "Recent launch, prices aren't moving much yet.", 
+      expectedMovement: "Stable", 
+      timeWindow: "45 days",
+      percentile: 40,
+      volatility: 3,
+      isShieldProtected: false,
+      isFakeSale: false,
+      fairValue: 33000,
+      overpriceAmount: 900
+    },
     trend: "stable",
-    lowestPrice: 31900, highestPrice: 35900, averagePrice: 33900, currentBestPrice: 31900, currentBestPlatform: "Amazon", isShieldProtected: false
+    lowestPrice: 31900, highestPrice: 35900, averagePrice: 33900, currentBestPrice: 31900, currentBestPlatform: "Amazon", isShieldProtected: false,
+    verificationState: "VERIFIED"
   },
   {
     id: "15",
@@ -244,8 +454,23 @@ export const products: Product[] = [
       { id: "p15a", platformId: "hp", name: "HP Store", logo: "/platforms/hp.svg", price: 164999, originalPrice: 174999, effectivePrice: 154999, url: "https://hp.com", inStock: true, bankOffers: ["10000 off on major cards"] }
     ],
     priceHistory: [{ date: "2024-05-01", price: 164999, platform: "HP Store" }],
-    decision: { type: "WAIT", confidence: 70, reasoning: "Back-to-school offers coming in July.", expectedMovement: "Drop", timeWindow: "60 days" },
+    decision: { 
+      decision: "WAIT", 
+      confidence: 70, 
+      score: 48,
+      verdict: "WAIT FOR DROP",
+      reasoning: "Back-to-school offers coming in July.", 
+      expectedMovement: "Drop", 
+      timeWindow: "60 days",
+      percentile: 65,
+      volatility: 6,
+      isShieldProtected: false,
+      isFakeSale: false,
+      fairValue: 160000,
+      overpriceAmount: 4999
+    },
     trend: "stable",
-    lowestPrice: 154999, highestPrice: 174999, averagePrice: 164999, currentBestPrice: 154999, currentBestPlatform: "HP Store", isShieldProtected: false
+    lowestPrice: 154999, highestPrice: 174999, averagePrice: 164999, currentBestPrice: 154999, currentBestPlatform: "HP Store", isShieldProtected: false,
+    verificationState: "VERIFIED"
   }
 ];
