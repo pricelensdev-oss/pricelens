@@ -17,7 +17,7 @@ export async function getProductsByIds(ids: string[]): Promise<Product[]> {
     where: { id: { in: ids } },
     include: {
       platforms: true,
-      snapshots: true,
+      oracleSnapshots: true,
     },
   })
 

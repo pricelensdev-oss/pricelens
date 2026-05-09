@@ -18,12 +18,12 @@ export async function POST(req: NextRequest) {
         ]
       },
       include: {
-        snapshots: true
+        oracleSnapshots: true
       }
     })
 
     // 2. Run the Intelligence Engine
-    const snapshots = (product?.snapshots || []).map(s => ({
+    const snapshots = (product?.oracleSnapshots || []).map(s => ({
       date: s.timestamp.toISOString(),
       price: s.price,
       platform: s.platform,

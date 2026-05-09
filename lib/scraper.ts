@@ -74,7 +74,7 @@ import { getNextMajorEvent } from "./seasonal-events"
 async function recalculateProductIntelligence(productId: string) {
   const product = await db.product.findUnique({
     where: { id: productId },
-    include: { platforms: true, snapshots: true }
+    include: { platforms: true, oracleSnapshots: true }
   })
 
   if (!product || product.platforms.length === 0) return

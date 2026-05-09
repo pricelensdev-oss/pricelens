@@ -75,11 +75,11 @@ export async function ingestProductFromUrl(url: string): Promise<IngestionResult
 
   const existingProduct = await db.product.findUnique({
     where: { fingerprintHash: fingerprint },
-    include: { snapshots: { take: 1, orderBy: { timestamp: 'asc' } } }
+    include: { oracleSnapshots: true }
   });
 
   let driftAlert = false;
-  if (existingProduct && existingProduct.snapshots.length > 0) {
+  if (existingProduct && existingProduct.oracleSnapshots.length > 0) {
     const drift = detectListingDrift(canonical.title, existingProduct.name);
     driftAlert = drift.isHijacked;
   }
