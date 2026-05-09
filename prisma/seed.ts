@@ -63,7 +63,7 @@ async function main() {
           }))
         },
 
-        snapshots: {
+        oracleSnapshots: {
           create: product.priceHistory.map(ph => ({
             timestamp: new Date(ph.date),
             price: ph.price,

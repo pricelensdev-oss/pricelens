@@ -65,7 +65,7 @@ model Product {
   updatedAt DateTime @updatedAt
 
   platforms         Platform[]
-  snapshots         OracleSnapshot[]
+  oracleSnapshots  OracleSnapshot[]
   watchlistedBy     Watchlist[]
   protectedPurchases ProtectedPurchase[]
 }
