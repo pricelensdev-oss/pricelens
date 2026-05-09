@@ -3,6 +3,7 @@ import { parseMarketplaceUrl } from '../urls';
 import { generateProductFingerprint } from './fingerprint';
 import { normalizeProduct, CanonicalProduct } from '../normalization';
 import { scrapeFlipkart } from '../scrapers/flipkart';
+import { scrapeLightweight } from '../scrapers/lightweight';
 import { validateProductSemantics } from './semantic';
 import { detectListingDrift } from './drift';
 import { arbitratePriceTruth } from './arbitration';
@@ -30,17 +31,35 @@ export async function ingestProductFromUrl(url: string): Promise<IngestionResult
   // 2. Hybrid Extraction Strategy
   let scrapedData: Partial<CanonicalProduct> = {};
   try {
-    scrapedData = await scrapeFlipkart(url);
+    // Stage 1: Try lightweight fetch-based scraping first (Vercel compatible)
+    console.log(`[Ingestion] Attempting Stage 1 Lightweight Scrape...`);
+    scrapedData = await scrapeLightweight(url);
+    
+    // If we got good data, we can skip Stage 2 (Playwright)
+    if (scrapedData.title && scrapedData.price && scrapedData.price > 0) {
+      console.log(`[Ingestion] ✅ Stage 1 Success: ${scrapedData.title}`);
+    } else {
+      // Stage 2: Attempt high-fidelity browser scraping
+      console.log(`[Ingestion] Stage 1 incomplete. Attempting Stage 2 Browser Scrape...`);
+      const stage2Data = await scrapeFlipkart(url);
+      scrapedData = { ...scrapedData, ...stage2Data };
+    }
   } catch (error) {
-    console.error(`[CRITICAL]: Scraper failed for ${url}. This usually happens on Vercel due to missing Playwright binaries.`, error);
-    // Fallback: Use basic data from URL or empty
-    scrapedData = {
-      title: "Market Discovery In-Progress",
-      brand: "Unknown",
-      price: 0,
-      images: [],
-      description: "Live analysis is currently limited in this environment. Please try again later or search by name."
-    };
+    console.warn(`[Ingestion] Scraper chain failed. Attempting Stage 2 fallback...`, error);
+    try {
+      const stage2Data = await scrapeFlipkart(url);
+      scrapedData = { ...scrapedData, ...stage2Data };
+    } catch (stage2Error) {
+      console.error(`[CRITICAL]: Scraper chain failed completely for ${url}.`, stage2Error);
+      // Fallback: Use basic data from URL or empty
+      scrapedData = {
+        title: "Market Discovery In-Progress",
+        brand: "Unknown",
+        price: 0,
+        images: [],
+        description: "Live analysis is currently limited in this environment. Please try again later or search by name."
+      };
+    }
   }
   
   // 3. Normalization & Schema Validation
