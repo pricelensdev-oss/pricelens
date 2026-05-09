@@ -28,9 +28,20 @@ export async function ingestProductFromUrl(url: string): Promise<IngestionResult
   const identity = parseMarketplaceUrl(url);
   
   // 2. Hybrid Extraction Strategy
-  // STAGE 1: Lightweight Fetch (Coming soon: Save 80% RAM/Cost)
-  // STAGE 2: Playwright Deep Scan (Current: High Fidelity)
-  const scrapedData = await scrapeFlipkart(url);
+  let scrapedData: Partial<CanonicalProduct> = {};
+  try {
+    scrapedData = await scrapeFlipkart(url);
+  } catch (error) {
+    console.error(`[CRITICAL]: Scraper failed for ${url}. This usually happens on Vercel due to missing Playwright binaries.`, error);
+    // Fallback: Use basic data from URL or empty
+    scrapedData = {
+      title: "Market Discovery In-Progress",
+      brand: "Unknown",
+      price: 0,
+      images: [],
+      description: "Live analysis is currently limited in this environment. Please try again later or search by name."
+    };
+  }
   
   // 3. Normalization & Schema Validation
   const canonical = normalizeProduct(scrapedData);

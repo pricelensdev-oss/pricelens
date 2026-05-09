@@ -195,8 +195,13 @@ export async function discoverProducts(query: string): Promise<string[]> {
     
     if (isUrl) {
       // Oracle V4: High-Fidelity Ingestion
-      const result = await ingestProductFromUrl(query);
-      return [result.productId];
+      try {
+        const result = await ingestProductFromUrl(query);
+        return [result.productId];
+      } catch (e) {
+        console.error("[CRITICAL]: URL Ingestion failed in discovery", query, e);
+        return [];
+      }
     }
 
     // Standard Discovery for queries
