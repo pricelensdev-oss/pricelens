@@ -160,50 +160,58 @@ export async function getProductById(id: string): Promise<Product | undefined> {
 }
 
 export async function searchProducts(query: string): Promise<SearchResult[]> {
-  const lowerQuery = query.toLowerCase()
-  const products = await db.product.findMany({
-    where: {
-      OR: [
-        { name: { contains: lowerQuery } },
-        { brand: { contains: lowerQuery } },
-        { category: { contains: lowerQuery } },
-      ],
-    },
-    include: {
-      platforms: true,
-      oracleSnapshots: true,
-    },
-  })
+  try {
+    const lowerQuery = query.toLowerCase()
+    const products = await db.product.findMany({
+      where: {
+        OR: [
+          { name: { contains: lowerQuery } },
+          { brand: { contains: lowerQuery } },
+          { category: { contains: lowerQuery } },
+        ],
+      },
+      include: {
+        platforms: true,
+        oracleSnapshots: true,
+      },
+    })
 
-  return products.map((p: any) => {
-    const dynamicSignal = analyzePriceSignals(
-      p.oracleSnapshots as any,
-      p.currentBestPrice,
-      p.name
-    )
+    return products.map((p: any) => {
+      const dynamicSignal = analyzePriceSignals(
+        p.oracleSnapshots as any,
+        p.currentBestPrice,
+        p.name
+      )
 
-    return {
-      id: p.id,
-      name: p.name,
-      brand: p.brand,
-      category: p.category,
-      image: p.image,
-      currentBestPrice: p.currentBestPrice,
-      originalPrice: p.platforms[0]?.originalPrice || p.currentBestPrice,
-      ...dynamicSignal,
-      trend: p.trend as "up" | "down" | "stable",
-      platforms: p.platforms.map((pl: any) => ({
-        platformId: pl.platformId,
-        name: pl.name,
-        price: pl.price,
-        originalPrice: pl.originalPrice,
-        bankOffers: pl.bankOffers ? JSON.parse(pl.bankOffers) : undefined,
-      })),
-      dealScore: computeDealScore(p.currentBestPrice, p.platforms[0]?.originalPrice || p.currentBestPrice, dynamicSignal.confidence),
-      verificationState: p.verificationState as VerificationState,
-      driftAlert: p.driftAlert,
+      return {
+        id: p.id,
+        name: p.name,
+        brand: p.brand,
+        category: p.category,
+        image: p.image,
+        currentBestPrice: p.currentBestPrice,
+        originalPrice: p.platforms[0]?.originalPrice || p.currentBestPrice,
+        ...dynamicSignal,
+        trend: p.trend as "up" | "down" | "stable",
+        platforms: p.platforms.map((pl: any) => ({
+          platformId: pl.platformId,
+          name: pl.name,
+          price: pl.price,
+          originalPrice: pl.originalPrice,
+          bankOffers: pl.bankOffers ? JSON.parse(pl.bankOffers) : undefined,
+        })),
+        dealScore: computeDealScore(p.currentBestPrice, p.platforms[0]?.originalPrice || p.currentBestPrice, dynamicSignal.confidence),
+        verificationState: p.verificationState as VerificationState,
+        driftAlert: p.driftAlert,
+      }
+    })
+  } catch (error: any) {
+    console.error("[CRITICAL ERROR]: searchProducts failed", error);
+    if (error.message.includes("Can't reach database")) {
+      throw new Error("DATABASE_OFFLINE");
     }
-  })
+    return [];
+  }
 }
 
 export async function getAllProducts(): Promise<SearchResult[]> {

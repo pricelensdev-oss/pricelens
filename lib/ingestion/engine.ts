@@ -117,62 +117,77 @@ export async function ingestProductFromUrl(url: string): Promise<IngestionResult
 
   const state = deriveVerificationState(confidence);
 
-  // 6. Persistence & Snapshotting
-  const product = await db.product.upsert({
-    where: { fingerprintHash: fingerprint },
-    update: {
-      currentBestPrice: arbitratedPrice,
-      verificationState: state,
-      confidenceScore: confidence,
-      driftAlert: driftAlert,
-      lastCalculatedAt: new Date(),
-    },
-    create: {
-      name: canonical.title,
-      brand: canonical.brand,
-      category: canonical.category || 'General',
-      image: canonical.images[0] || '',
-      description: canonical.description || '',
-      fingerprintHash: fingerprint,
-      verificationState: state,
-      confidenceScore: confidence,
-      driftAlert: driftAlert,
-      currentBestPrice: arbitratedPrice,
-      currentBestPlatform: identity.platform,
-    }
-  });
+  // 8. Persistence & Snapshotting (Hardened)
+  try {
+    const product = await db.product.upsert({
+      where: { fingerprintHash: fingerprint },
+      update: {
+        currentBestPrice: arbitratedPrice,
+        verificationState: state,
+        confidenceScore: confidence,
+        driftAlert: driftAlert,
+        lastCalculatedAt: new Date(),
+      },
+      create: {
+        name: canonical.title,
+        brand: canonical.brand,
+        category: canonical.category || 'General',
+        image: canonical.images[0] || '',
+        description: canonical.description || '',
+        fingerprintHash: fingerprint,
+        verificationState: state,
+        confidenceScore: confidence,
+        driftAlert: driftAlert,
+        currentBestPrice: arbitratedPrice,
+        currentBestPlatform: identity.platform,
+      }
+    });
 
-  // 7. Create Historical Snapshot
-  await db.oracleSnapshot.create({
-    data: {
+    // 9. Create Historical Snapshot
+    await db.oracleSnapshot.create({
+      data: {
+        productId: product.id,
+        price: canonical.price,
+        originalPrice: canonical.originalPrice,
+        platform: identity.platform,
+        sellerName: canonical.seller,
+        stockStatus: canonical.availability,
+        date: new Date().toISOString().split('T')[0],
+        timestamp: new Date()
+      }
+    });
+
+    // 10. Queue for Semantic Embedding (Vector Moat)
+    await queueForEmbedding({
       productId: product.id,
-      price: canonical.price,
-      originalPrice: canonical.originalPrice,
-      platform: identity.platform,
-      sellerName: canonical.seller,
-      stockStatus: canonical.availability,
-      date: new Date().toISOString().split('T')[0],
-      timestamp: new Date()
-    }
-  });
+      text: `${canonical.brand} ${canonical.title} ${canonical.description}`,
+      metadata: {
+        category: canonical.category,
+        price: canonical.price,
+        fingerprint
+      }
+    });
 
-  // 8. Queue for Semantic Embedding (Vector Moat)
-  await queueForEmbedding({
-    productId: product.id,
-    text: `${canonical.brand} ${canonical.title} ${canonical.description}`,
-    metadata: {
-      category: canonical.category,
-      price: canonical.price,
-      fingerprint
+    return {
+      productId: product.id,
+      confidence,
+      state,
+      product: canonical
+    };
+  } catch (dbError: any) {
+    console.error("[CRITICAL]: Database persistence failed during ingestion", {
+      fingerprint,
+      error: dbError.message,
+      code: dbError.code,
+    });
+    
+    // Check if it's a connection error
+    if (dbError.message.includes("Can't reach database") || dbError.message.includes("Invalid connection string")) {
+      throw new Error("DATABASE_CONNECTION_ERROR: The production database is unreachable. Please verify your DATABASE_URL in Vercel.");
     }
-  });
 
-  return {
-    productId: product.id,
-    confidence,
-    state,
-    product: canonical
-  };
+    throw dbError;
+  }
 }
 
 function calculateConfidence(product: CanonicalProduct, identity: any): number {
