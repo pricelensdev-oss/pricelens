@@ -35,7 +35,7 @@ export async function scrapeLightweight(url: string): Promise<Partial<CanonicalP
 
 function scrapeFlipkartLight(html: string, url: string): Partial<CanonicalProduct> {
   // Extract JSON-LD
-  const jsonLdMatch = html.match(/<script type="application\/ld\+json">(.*?)<\/script>/s);
+  const jsonLdMatch = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
   let productLd: any = {};
   
   if (jsonLdMatch) {
