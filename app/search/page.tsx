@@ -9,6 +9,7 @@ export const metadata = {
 import { searchProducts, getAllProducts, getBrands, getCategoryStats } from "@/lib/data"
 import { discoverProducts } from "@/lib/scraper"
 import { redirect } from "next/navigation"
+import type { SearchResult } from "@/lib/types"
 
 export default async function SearchPage({
   searchParams,
@@ -19,15 +20,19 @@ export default async function SearchPage({
 
   // Handle Smart Link Analysis
   if (analyze) {
-    const productIds = await discoverProducts(analyze)
-    if (productIds.length > 0) {
-      redirect(`/product/${productIds[0]}`)
+    try {
+      const productIds = await discoverProducts(analyze)
+      if (productIds.length > 0) {
+        redirect(`/product/${productIds[0]}`)
+      }
+    } catch (e) {
+      console.error("[CRITICAL]: URL Analysis failed", e)
     }
   }
 
-  let products = []
-  let brands = []
-  let categoryStats = []
+  let products: SearchResult[] = []
+  let brands: { name: string; count: number }[] = []
+  let categoryStats: { name: string; count: number }[] = []
 
   try {
     products = q ? await searchProducts(q) : await getAllProducts()
@@ -35,7 +40,6 @@ export default async function SearchPage({
     categoryStats = await getCategoryStats()
   } catch (error) {
     console.error("[CRITICAL]: Search page data fetching failed", error)
-    // Keep them as empty arrays to avoid crashing the client component
   }
 
   return (
