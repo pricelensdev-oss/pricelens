@@ -46,8 +46,8 @@ export async function scrapeFlipkart(url: string): Promise<Partial<CanonicalProd
       rating: parseFloat(productLd?.aggregateRating?.ratingValue || '0'),
       reviewCount: parseInt(productLd?.aggregateRating?.reviewCount || '0'),
       metadata: {
-        pid: new URL(url).searchParams.get('pid'),
-        lid: new URL(url).searchParams.get('lid'),
+        pid: new URL(url).searchParams.get('pid') ?? undefined,
+        lid: new URL(url).searchParams.get('lid') ?? undefined,
         category: productLd?.category
       }
     };
