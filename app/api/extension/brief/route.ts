@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     })
 
     // 2. Run the Intelligence Engine
-    const snapshots = (product?.oracleSnapshots || []).map(s => ({
+    const oracleSnapshots = (product?.oracleSnapshots || []).map(s => ({
       date: s.timestamp.toISOString(),
       price: s.price,
       platform: s.platform,
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     }))
 
     const decision = analyzePriceSignals(
-      snapshots,
+      oracleSnapshots as any,
       price,
       title
     )

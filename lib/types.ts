@@ -54,7 +54,7 @@ export interface Product {
   specifications: Record<string, any>
   platforms: Platform[]
   priceHistory: PricePoint[]
-  snapshots?: any[] 
+  oracleSnapshots?: any[] 
   verificationState: VerificationState
   confidenceScore?: number
   driftAlert?: boolean

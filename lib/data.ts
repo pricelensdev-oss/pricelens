@@ -23,7 +23,7 @@ export async function getProductsByIds(ids: string[]): Promise<Product[]> {
 
   return products.map((product: any) => {
     const dynamicSignal = analyzePriceSignals(
-      product.snapshots as any,
+      product.oracleSnapshots as any,
       product.currentBestPrice,
       product.name
     )
@@ -57,7 +57,7 @@ export async function getProductsByIds(ids: string[]): Promise<Product[]> {
         inStock: p.inStock,
         bankOffers: p.bankOffers ? JSON.parse(p.bankOffers) : undefined,
       })),
-      priceHistory: product.snapshots.map((s: any) => ({
+      priceHistory: product.oracleSnapshots.map((s: any) => ({
         date: s.timestamp.toISOString(),
         price: s.price,
         platform: s.platform,
@@ -85,14 +85,14 @@ export async function getProductById(id: string): Promise<Product | undefined> {
       where: { id },
       include: {
         platforms: true,
-        snapshots: true,
+        oracleSnapshots: true,
       },
     })
 
     if (!product) return undefined
 
     const dynamicSignal = analyzePriceSignals(
-      (product.snapshots || []) as any,
+      (product.oracleSnapshots || []) as any,
       product.currentBestPrice,
       product.name
     )
@@ -134,7 +134,7 @@ export async function getProductById(id: string): Promise<Product | undefined> {
           bankOffers,
         }
       }),
-      priceHistory: (product.snapshots || []).map((s: any) => ({
+      priceHistory: (product.oracleSnapshots || []).map((s: any) => ({
         date: s.timestamp?.toISOString() || new Date().toISOString(),
         price: s.price,
         platform: s.platform,
@@ -171,13 +171,13 @@ export async function searchProducts(query: string): Promise<SearchResult[]> {
     },
     include: {
       platforms: true,
-      snapshots: true,
+      oracleSnapshots: true,
     },
   })
 
   return products.map((p: any) => {
     const dynamicSignal = analyzePriceSignals(
-      p.snapshots as any,
+      p.oracleSnapshots as any,
       p.currentBestPrice,
       p.name
     )
@@ -211,14 +211,14 @@ export async function getAllProducts(): Promise<SearchResult[]> {
     const products = await db.product.findMany({
       include: {
         platforms: true,
-        snapshots: true,
+        oracleSnapshots: true,
       },
     })
 
     return products.map((p: any) => {
       try {
         const dynamicSignal = analyzePriceSignals(
-          (p.snapshots || []) as any,
+          (p.oracleSnapshots || []) as any,
           p.currentBestPrice,
           p.name
         )

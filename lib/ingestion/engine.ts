@@ -94,7 +94,7 @@ export async function ingestProductFromUrl(url: string): Promise<IngestionResult
 
   // 6. Truth Arbitration (Multi-Signal Resolution)
   // Fetch recent snapshots to resolve truth
-  const recentSnapshots = existingProduct?.snapshots || [];
+  const recentSnapshots = existingProduct?.oracleSnapshots || [];
   const arbitratedPrice = arbitratePriceTruth([
     { 
       price: canonical.price, 
